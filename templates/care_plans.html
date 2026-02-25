@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}Care Plans{% endblock %}
+{% block breadcrumb %}Care Plans{% endblock %}
+
+{% block content %}
+<div class="care-hero">
+    <div style="max-width:1100px;margin:0 auto;">
+        <h1><i class="fas fa-notes-medical"></i> Care Plan Management</h1>
+        <p>Personalized care plans with medication schedules, milestones, and progress tracking — co-created by you and
+            your doctor.</p>
+    </div>
+</div>
+
+<div class="section">
+    <div
+        style="display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;flex-wrap:wrap;gap:12px;">
+        <div>
+            <h2 style="font-size:1.4rem;">My Active Care Plans</h2>
+            <p style="color:var(--text-light);font-size:0.88rem;">Managed under Indian Medical Council Act guidelines
+            </p>
+        </div>
+        <button class="btn btn-blue" onclick="document.getElementById('newPlanModal').classList.add('show')">
+            <i class="fas fa-plus"></i> Request New Plan
+        </button>
+    </div>
+
+    <div id="carePlansContainer">
+        <div style="text-align:center;padding:48px;color:var(--text-muted);"><i
+                class="fas fa-spinner fa-spin fa-2x"></i></div>
+    </div>
+</div>
+
+<!-- New Plan Modal -->
+<div class="modal-overlay" id="newPlanModal">
+    <div class="modal" style="max-width:540px;">
+        <h2><i class="fas fa-notes-medical" style="color:var(--primary)"></i> Request a New Care Plan</h2>
+        <div class="form-group">
+            <label>Condition / Concern</label>
+            <input type="text" class="form-input" id="planCondition"
+                placeholder="e.g. Type 2 Diabetes, Hypertension...">
+        </div>
+        <div class="form-group">
+            <label>Preferred Doctor (optional)</label>
+            <select class="form-input" id="planDoctor">
+                <option>Any Available Doctor</option>
+                <option>Dr. Rajesh Kumar (Cardiologist)</option>
+                <option>Dr. Sanjay Gupta (Endocrinologist)</option>
+                <option>Dr. Anita Desai (General Physician)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Goals / Notes</label>
+            <textarea class="form-input" id="planGoals" rows="3"
+                placeholder="What outcomes are you hoping to achieve?"></textarea>
+        </div>
+        <div style="display:flex;gap:12px;">
+            <button class="btn btn-blue" style="flex:1;" onclick="submitPlanRequest()"><i
+                    class="fas fa-paper-plane"></i> Submit Request</button>
+            <button class="btn" style="border:1px solid var(--border);"
+                onclick="document.getElementById('newPlanModal').classList.remove('show')">Cancel</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function loadCarePlans() {
+        const res = await fetch('/api/care-plans');
+        const plans = await res.json();
+        const container = document.getElementById('carePlansContainer');
+        if (!plans.length) {
+            container.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:40px;">No active care plans. Request one to get started.</p>';
+            return;
+        }
+        container.innerHTML = plans.map(p => `
+        <div class="care-card">
+            <div class="care-card-header">
+                <div>
+                    <h3>${p.title}</h3>
+                    <p><i class="fas fa-user-md"></i> ${p.doctor} · ${p.start_date} → ${p.end_date}</p>
+                </div>
+                <span class="badge badge-${p.status === 'Active' ? 'blue' : 'green'}">${p.status}</span>
+            </div>
+            <div class="progress-bar-wrap">
+                <label><span>Overall Progress</span><span>${p.progress}%</span></label>
+                <div class="progress-bar"><div class="progress-fill" style="width:${p.progress}%"></div></div>
+            </div>
+            <div class="grid-2" style="gap:20px;">
+                <div>
+                    <h4 style="font-size:0.88rem;margin-bottom:10px;color:var(--text-light);">📋 Tasks</h4>
+                    <ul class="task-list">
+                        ${p.tasks.map(t => `<li><i class="fas fa-check-circle"></i>${t}</li>`).join('')}
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="font-size:0.88rem;margin-bottom:10px;color:var(--text-light);">💊 Medications</h4>
+                    <ul class="task-list">
+                        ${p.medications.map(m => `<li><i class="fas fa-capsules" style="color:var(--primary)"></i>${m}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    }
+
+    function submitPlanRequest() {
+        const condition = document.getElementById('planCondition').value;
+        if (!condition) { showAlert('Please enter your condition.', 'error'); return; }
+        document.getElementById('newPlanModal').classList.remove('show');
+        showAlert('Care plan request submitted! Your doctor will review it within 24 hours.');
+    }
+
+    loadCarePlans();
+</script>
+{% endblock %}

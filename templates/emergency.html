@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+{% block title %}Emergency 108 & Hospitals{% endblock %}
+{% block breadcrumb %}Emergency 108{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 100px;">
+    <div class="section-header">
+        <h2><i class="fas fa-ambulance" style="color:var(--danger);"></i> <span
+                data-i18n="Emergency 108 & Hospitals">Emergency 108 &amp; Hospitals</span></h2>
+        <div class="divider" style="background:var(--danger);"></div>
+        <p data-i18n="Find nearby hospitals, book ambulances, and get emergency help in real-time.">Find nearby
+            hospitals, book ambulances, and get emergency help in real-time.</p>
+    </div>
+
+    <!-- ─── Emergency Actions ─────────────────── -->
+    <div style="display:flex; gap:12px; justify-content:center; margin-bottom:32px; flex-wrap:wrap;">
+        <a href="tel:108" class="btn btn-danger"><i class="fas fa-phone-alt"></i> <span data-i18n="Call 108 Now">Call
+                108 Now</span></a>
+        <button class="btn btn-blue" onclick="bookAmbulance()"><i class="fas fa-ambulance"></i> <span
+                data-i18n="Book Ambulance">Book Ambulance</span></button>
+        <button class="btn btn-outline" style="border-color:var(--primary);color:var(--primary);"
+            onclick="shareLocation()"><i class="fas fa-map-marker-alt"></i> <span data-i18n="Share Location">Share
+                Location</span></button>
+    </div>
+
+    <!-- ─── Map ───────────────────────────────── -->
+    <div class="map-container">
+        <div id="emergency-map"></div>
+    </div>
+
+    <!-- ─── Ambulance Tracker + Share Form ───── -->
+    <div class="emergency-panel">
+        <div class="ambulance-tracker">
+            <h3><i class="fas fa-truck-medical"></i> <span data-i18n="Ambulance Tracker">Ambulance Tracker</span></h3>
+            <div class="tracker-status" id="trackerStatus" style="display:none;">
+                <div class="status-dot"></div>
+                <div>
+                    <strong id="ambNumber">Ambulance #AMB-1042</strong>
+                    <p style="font-size:0.82rem;color:var(--text-muted);margin:0;"
+                        data-i18n="En route to your location">En route to your location</p>
+                </div>
+            </div>
+            <!-- Driver Info Card -->
+            <div id="driverInfo"
+                style="display:none;margin-top:12px;padding:14px;background:linear-gradient(135deg,rgba(0,137,123,0.12),rgba(0,137,123,0.05));border:1px solid rgba(0,137,123,0.25);border-radius:10px;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div
+                        style="width:44px;height:44px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;flex-shrink:0;">
+                        <i class="fas fa-user-nurse"></i></div>
+                    <div style="flex:1;">
+                        <div style="font-weight:700;font-size:0.95rem;" id="driverName">--</div>
+                        <div style="font-size:0.78rem;color:var(--text-muted);">Assigned Driver · <a id="driverPhone"
+                                href="#" style="color:var(--primary);">--</a></div>
+                    </div>
+                    <span class="badge badge-green">🟢 Verified</span>
+                </div>
+                <div style="margin-top:8px;font-size:0.78rem;color:var(--text-muted);">
+                    <i class="fas fa-shield-alt" style="color:var(--success);"></i> Police-verified driver · EMT
+                    Certified
+                </div>
+            </div>
+            <div id="trackerInfo" style="text-align:center;padding:32px 0;color:var(--text-muted);">
+                <i class="fas fa-ambulance" style="font-size:2.5rem;margin-bottom:12px;display:block;opacity:0.3;"></i>
+                <p data-i18n="No active ambulance booking.">No active ambulance booking. Click "Book Ambulance" to
+                    request one.</p>
+            </div>
+            <div id="trackerDetails" style="display:none;">
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px;">
+                    <div class="card" style="padding:16px;text-align:center;">
+                        <div style="font-size:1.4rem;font-weight:700;color:var(--primary);font-family:monospace;"
+                            id="etaTime">--:--:--</div>
+                        <div style="font-size:0.78rem;color:var(--text-muted);" data-i18n="Est. Arrival">Est. Arrival
+                        </div>
+                    </div>
+                    <div class="card" style="padding:16px;text-align:center;">
+                        <div style="font-size:1.5rem;font-weight:700;color:var(--success);" id="etaDist">--</div>
+                        <div style="font-size:0.78rem;color:var(--text-muted);" data-i18n="Distance">Distance</div>
+                    </div>
+                    <div class="card" style="padding:16px;text-align:center;">
+                        <div style="font-size:1.5rem;font-weight:700;color:var(--warning);" id="etaSpeed">--</div>
+                        <div style="font-size:0.78rem;color:var(--text-muted);" data-i18n="Avg Speed">Avg Speed</div>
+                    </div>
+                </div>
+                <div style="margin-top:16px;">
+                    <div style="height:8px;background:var(--border-light);border-radius:4px;overflow:hidden;">
+                        <div id="progressBar"
+                            style="height:100%;background:linear-gradient(90deg,var(--success),var(--primary));border-radius:4px;width:0%;transition:width 1s ease;">
+                        </div>
+                    </div>
+                    <p style="font-size:0.78rem;color:var(--text-muted);margin-top:8px;text-align:center;"
+                        data-i18n="Ambulance is on its way...">Ambulance is on its way...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="share-form">
+            <h3><i class="fas fa-share-alt"></i> <span data-i18n="Share Emergency Details">Share Emergency
+                    Details</span></h3>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin:8px 0 20px;"
+                data-i18n="Share your location and contact with the hospital.">Share your location and contact with
+                the hospital.</p>
+            <div class="form-group">
+                <label data-i18n="Your Address">Your Address</label>
+                <textarea class="form-input" id="shareAddress" rows="2"
+                    placeholder="Enter your current address or click Share Location">Loading location...</textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label data-i18n="Contact Number">Contact Number</label>
+                    <input type="tel" class="form-input" id="sharePhone" placeholder="+91 98765 43210">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="Emergency Contact">Emergency Contact</label>
+                    <input type="tel" class="form-input" id="shareEmergency" placeholder="+91 98765 43211">
+                </div>
+            </div>
+            <button class="btn btn-blue" onclick="shareEmergencyDetails()" style="width:100%;justify-content:center;">
+                <i class="fas fa-paper-plane"></i> <span data-i18n="Share with Hospital">Share with Hospital</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ─── Hospital List ─────────────────────── -->
+    <div style="margin-top:40px;">
+        <h3 style="margin-bottom:20px;" data-i18n="All Partner Hospitals">All Partner Hospitals</h3>
+        <div class="grid-2" id="hospitalList">
+            <p style="color:var(--text-muted);" data-i18n="Loading hospitals...">Loading hospitals...</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // ─── ETA Formatter ───────────────────────────
+    function formatETA(totalSeconds) {
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = totalSeconds % 60;
+        return [
+            h.toString().padStart(2, '0'),
+            m.toString().padStart(2, '0'),
+            s.toString().padStart(2, '0')
+        ].join(':');
+    }
+
+    // ─── Initialize Map ──────────────────────────
+    let map, markers = [];
+    document.addEventListener('DOMContentLoaded', () => {
+        map = L.map('emergency-map').setView([20.5937, 78.9629], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        loadHospitals();
+    });
+
+    async function loadHospitals() {
+        try {
+            const res = await fetch('/api/hospitals');
+            const hospitals = await res.json();
+            const list = document.getElementById('hospitalList');
+            list.innerHTML = '';
+
+            hospitals.forEach(h => {
+                const etaFormatted = formatETA(h.transport_eta * 60);
+                const kmcBadge = h.kmc_affiliated ? `<span style="padding:2px 8px;background:#7B1FA2;color:#fff;border-radius:12px;font-size:0.7rem;"><i class="fas fa-hospital"></i> KMC</span>` : '';
+                const videoBadge = h.video_consultation ? `<span style="padding:2px 8px;background:#1565C0;color:#fff;border-radius:12px;font-size:0.7rem;"><i class="fas fa-video"></i> Video</span>` : '';
+
+                // Map marker with popup
+                const marker = L.marker([h.lat, h.lng]).addTo(map);
+                marker.bindPopup(`
+                <div style="min-width:240px;font-family:Inter,sans-serif;">
+                    <h3 style="font-size:1rem;margin:0 0 6px;color:#1565C0;">${h.name}</h3>
+                    <p style="font-size:0.82rem;margin:0 0 4px;color:#5A6B7F;">${h.address}</p>
+                    <p style="font-size:0.82rem;margin:0 0 4px;">⭐ ${h.rating} | 🕐 ${h.available_from} – ${h.available_to}</p>
+                    <p style="font-size:0.82rem;margin:0 0 4px;">🚑 ETA: <b>${etaFormatted}</b> (${h.transport_eta} min)</p>
+                    <p style="font-size:0.82rem;margin:0 0 8px;">🛏️ ${h.beds_available} beds | 🏥 ICU: ${h.icu_beds}</p>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
+                        ${h.kmc_affiliated ? '<span style="padding:3px 8px;background:#7B1FA2;color:#fff;border-radius:12px;font-size:0.7rem;">🏥 KMC Affiliated</span>' : ''}
+                        ${h.video_consultation ? '<span style="padding:3px 8px;background:#1565C0;color:#fff;border-radius:12px;font-size:0.7rem;">📹 Video Consult</span>' : ''}
+                    </div>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <a href="tel:${h.phone}" style="padding:6px 12px;background:#1565C0;color:#fff;border-radius:16px;font-size:0.78rem;text-decoration:none;">📞 Call</a>
+                        <button onclick="bookAmbulanceFor('${h.name}',${h.transport_eta})" style="padding:6px 12px;background:#C62828;color:#fff;border-radius:16px;font-size:0.78rem;border:none;cursor:pointer;">🚑 Ambulance</button>
+                    </div>
+                </div>
+            `);
+                markers.push(marker);
+
+                // Hospital card
+                list.innerHTML += `
+                <div class="card" style="cursor:pointer;" onclick="map.setView([${h.lat},${h.lng}],14)">
+                    <div style="display:flex;justify-content:space-between;align-items:start;">
+                        <div>
+                            <h3 style="font-size:1rem;margin-bottom:4px;">${h.name}</h3>
+                            <p style="font-size:0.82rem;color:var(--text-muted);">${h.address}</p>
+                        </div>
+                        <span class="badge badge-green">⭐ ${h.rating}</span>
+                    </div>
+                    <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap;">
+                        ${kmcBadge} ${videoBadge}
+                    </div>
+                    <div style="display:flex;gap:16px;margin-top:8px;font-size:0.82rem;color:var(--text-light);flex-wrap:wrap;">
+                        <span>🕐 ${h.available_from} – ${h.available_to}</span>
+                        <span>🚑 ETA: <b style="color:var(--danger);font-family:monospace;">${etaFormatted}</b></span>
+                        <span>🛏️ ${h.beds_available} beds</span>
+                        <span>🏥 ICU: ${h.icu_beds}</span>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:12px;">
+                        <a href="tel:${h.phone}" class="btn btn-sm btn-blue" onclick="event.stopPropagation()"><i class="fas fa-phone"></i> ${h.phone}</a>
+                        ${h.has_ambulance ? '<button class="btn btn-sm btn-danger" onclick="event.stopPropagation();bookAmbulanceFor(\'' + h.name + '\',' + h.transport_eta + ')"><i class="fas fa-ambulance"></i> Book Ambulance</button>' : '<span class="badge badge-red">No Ambulance</span>'}
+                    </div>
+                </div>
+            `;
+            });
+
+            if (markers.length > 0) {
+                const group = L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        } catch (e) {
+            console.error('Failed to load hospitals:', e);
+        }
+    }
+
+    // ─── Ambulance Booking with HH:MM:SS countdown ──
+    let countdownInterval = null;
+
+    const driverPool = [
+        { name: 'Ravi Kumar Sharma', phone: '+91 98765 11001' },
+        { name: 'Suresh Nair', phone: '+91 98765 22002' },
+        { name: 'Arjun Reddy', phone: '+91 98765 33003' },
+        { name: 'Mohammed Irfan', phone: '+91 98765 44004' },
+        { name: 'Balram Singh', phone: '+91 98765 55005' },
+        { name: 'Deepak Yadav', phone: '+91 98765 66006' },
+        { name: 'Manoj Patel', phone: '+91 98765 77007' },
+        { name: 'Selvam Arumugam', phone: '+91 98765 88008' },
+    ];
+
+    function bookAmbulance() {
+        bookAmbulanceFor('Nearest Hospital', 15);
+    }
+
+    function bookAmbulanceFor(hospital, eta) {
+        if (countdownInterval) clearInterval(countdownInterval);
+
+        // Assign a random driver
+        const driver = driverPool[Math.floor(Math.random() * driverPool.length)];
+        const ambNum = 'AMB-' + (1000 + Math.floor(Math.random() * 9000));
+
+        document.getElementById('trackerStatus').style.display = 'flex';
+        document.getElementById('trackerInfo').style.display = 'none';
+        document.getElementById('trackerDetails').style.display = 'block';
+        document.getElementById('ambNumber').textContent = 'Ambulance #' + ambNum;
+
+        // Show driver info
+        document.getElementById('driverInfo').style.display = 'block';
+        document.getElementById('driverName').textContent = driver.name;
+        const driverPhoneEl = document.getElementById('driverPhone');
+        driverPhoneEl.textContent = driver.phone;
+        driverPhoneEl.href = 'tel:' + driver.phone;
+
+        let totalSeconds = eta * 60;
+        const distKm = (eta * 0.8).toFixed(1);
+        const speedKmh = Math.round(distKm / (eta / 60));
+
+        document.getElementById('etaTime').textContent = formatETA(totalSeconds);
+        document.getElementById('etaDist').textContent = distKm + ' km';
+        document.getElementById('etaSpeed').textContent = speedKmh + ' km/h';
+
+        let progress = 0;
+        countdownInterval = setInterval(() => {
+            if (totalSeconds > 0) {
+                totalSeconds--;
+                progress = Math.round(((eta * 60 - totalSeconds) / (eta * 60)) * 100);
+                document.getElementById('etaTime').textContent = formatETA(totalSeconds);
+                document.getElementById('progressBar').style.width = Math.min(progress, 100) + '%';
+            }
+            if (totalSeconds <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('etaTime').textContent = '00:00:00';
+                document.getElementById('progressBar').style.width = '100%';
+                showAlert('🚑 Ambulance #' + ambNum + ' has arrived! Driver: ' + driver.name);
+            }
+        }, 1000);
+
+        showAlert('🚑 Ambulance booked! Driver: ' + driver.name + ' · ' + driver.phone + ' · ETA: ' + eta + ' min from ' + hospital);
+    }
+
+    function shareLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                document.getElementById('shareAddress').value =
+                    `Lat: ${pos.coords.latitude.toFixed(6)}, Lng: ${pos.coords.longitude.toFixed(6)}`;
+                map.setView([pos.coords.latitude, pos.coords.longitude], 14);
+                L.marker([pos.coords.latitude, pos.coords.longitude])
+                    .addTo(map)
+                    .bindPopup('<b>📍 Your Location</b>').openPopup();
+            }, () => {
+                document.getElementById('shareAddress').value = 'Unable to get location. Please enter manually.';
+            });
+        }
+    }
+
+    function shareEmergencyDetails() {
+        const address = document.getElementById('shareAddress').value;
+        const phone = document.getElementById('sharePhone').value;
+        if (!phone) { showAlert('Please enter your contact number', 'error'); return; }
+        showAlert('Emergency details shared with the nearest hospital! They will contact you shortly.');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                document.getElementById('shareAddress').value =
+                    `Lat: ${pos.coords.latitude.toFixed(4)}, Lng: ${pos.coords.longitude.toFixed(4)}`;
+            }, () => {
+                document.getElementById('shareAddress').value = '';
+            });
+        }
+    });
+</script>
+{% endblock %}

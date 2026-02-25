@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+{% block title %}Order Medicine{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 100px;">
+    <div class="section-header">
+        <h2><i class="fas fa-pills" style="color:#7B1FA2;"></i> Order Medicine</h2>
+        <div class="divider"></div>
+        <p>Browse medicines, add to cart, and get doorstep delivery with secure payment.</p>
+    </div>
+
+    <!-- Search & Cart Toggle -->
+    <div style="display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap;align-items:end;">
+        <div class="form-group" style="margin:0;flex:1;min-width:250px;">
+            <input type="text" class="form-input" id="medSearch"
+                placeholder="🔍 Search medicines by name or category..." oninput="filterMedicines()">
+        </div>
+        <div class="form-group" style="margin:0;">
+            <select class="form-input" id="medCategory" onchange="filterMedicines()">
+                <option value="">All Categories</option>
+            </select>
+        </div>
+        <button class="btn btn-blue" onclick="openCart()" id="cartBtn">
+            <i class="fas fa-shopping-cart"></i> Cart (<span id="cartCount">0</span>)
+        </button>
+    </div>
+
+    <!-- Medicine Grid -->
+    <div class="medicine-grid" id="medicineGrid">
+        <p style="color:var(--text-muted);">Loading medicines...</p>
+    </div>
+</section>
+
+<!-- Cart Sidebar -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+        <h3><i class="fas fa-shopping-cart"></i> Your Cart</h3>
+        <button onclick="closeCart()" style="font-size:1.2rem;color:var(--text-light);"><i
+                class="fas fa-times"></i></button>
+    </div>
+    <div class="cart-items" id="cartItems">
+        <div style="text-align:center;padding:48px 0;color:var(--text-muted);">
+            <i class="fas fa-shopping-basket" style="font-size:2rem;display:block;margin-bottom:12px;opacity:0.3;"></i>
+            <p>Your cart is empty</p>
+        </div>
+    </div>
+    <div class="cart-footer">
+        <div class="cart-total">
+            <span>Total</span>
+            <span id="cartTotal">₹0</span>
+        </div>
+        <button class="btn btn-blue" style="width:100%;justify-content:center;" onclick="checkoutCart()">
+            <i class="fas fa-lock"></i> Proceed to Pay
+        </button>
+    </div>
+</div>
+
+<!-- Checkout Modal -->
+<div class="modal-overlay" id="checkoutModal">
+    <div class="modal" style="max-width:520px;">
+        <h2><i class="fas fa-lock" style="color:var(--primary);"></i> Checkout</h2>
+
+        <!-- Delivery Details -->
+        <div style="background:var(--bg);border-radius:12px;padding:16px;margin-bottom:16px;">
+            <h4 style="margin-bottom:12px;font-size:0.95rem;"><i class="fas fa-truck" style="color:var(--primary);"></i>
+                Delivery Details</h4>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" class="form-input" id="orderName" placeholder="Your full name">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number *</label>
+                    <input type="tel" class="form-input" id="orderPhone" placeholder="+91 98765 43210">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Delivery Address *</label>
+                <textarea class="form-input" id="orderAddress" rows="2"
+                    placeholder="House No., Street, Area, City, PIN Code"></textarea>
+            </div>
+        </div>
+
+        <div style="text-align:center;margin-bottom:16px;">
+            <div style="font-size:0.88rem;color:var(--text-muted);" id="checkoutItems">-- items</div>
+            <div style="font-size:2rem;font-weight:800;color:var(--primary);margin-top:4px;" id="checkoutTotal">₹0</div>
+        </div>
+        <div class="payment-options">
+            <div class="payment-option selected" onclick="selectMedPayment(this,'UPI')">
+                <i class="fas fa-mobile-alt"></i><span>UPI</span>
+            </div>
+            <div class="payment-option" onclick="selectMedPayment(this,'Credit Card')">
+                <i class="fas fa-credit-card"></i><span>Credit Card</span>
+            </div>
+            <div class="payment-option" onclick="selectMedPayment(this,'Debit Card')">
+                <i class="fas fa-credit-card"></i><span>Debit Card</span>
+            </div>
+            <div class="payment-option" onclick="selectMedPayment(this,'Net Banking')">
+                <i class="fas fa-university"></i><span>Net Banking</span>
+            </div>
+        </div>
+        <div id="medUpiSection">
+            <div class="form-group">
+                <label>UPI ID</label>
+                <input type="text" class="form-input" id="medUpiId" placeholder="yourname@paytm / phone@gpay">
+            </div>
+            <div
+                style="background:rgba(0,137,123,0.08);border-radius:8px;padding:10px;margin-bottom:8px;font-size:0.8rem;color:var(--text-muted);">
+                <i class="fas fa-info-circle" style="color:var(--primary);"></i>
+                You will be redirected to your UPI app to complete the payment securely.
+            </div>
+        </div>
+        <div id="medCardSection" style="display:none;">
+            <div class="form-group">
+                <label>Card Number</label>
+                <input type="text" class="form-input" placeholder="XXXX XXXX XXXX XXXX" maxlength="19">
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Expiry</label><input type="text" class="form-input" placeholder="MM/YY"
+                        maxlength="5"></div>
+                <div class="form-group"><label>CVV</label><input type="password" class="form-input" placeholder="***"
+                        maxlength="3"></div>
+            </div>
+        </div>
+        <button class="btn btn-blue" style="width:100%;justify-content:center;" onclick="processOrder()">
+            <i class="fas fa-shield-alt"></i> Pay Securely
+        </button>
+        <button class="btn" style="width:100%;justify-content:center;margin-top:8px;color:var(--text-muted);"
+            onclick="closeCheckout()">Cancel</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let allMedicines = [], cart = {};
+    let medPaymentMethod = 'UPI';
+
+    document.addEventListener('DOMContentLoaded', loadMedicines);
+
+    async function loadMedicines() {
+        try {
+            const res = await fetch('/api/medicines');
+            allMedicines = await res.json();
+            const cats = [...new Set(allMedicines.map(m => m.category))];
+            const sel = document.getElementById('medCategory');
+            cats.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c; opt.textContent = c;
+                sel.appendChild(opt);
+            });
+            renderMedicines(allMedicines);
+        } catch (e) { console.error('Failed to load medicines:', e); }
+    }
+
+    function filterMedicines() {
+        const search = document.getElementById('medSearch').value.toLowerCase();
+        const cat = document.getElementById('medCategory').value;
+        let filtered = allMedicines;
+        if (search) filtered = filtered.filter(m => m.name.toLowerCase().includes(search) || m.category.toLowerCase().includes(search));
+        if (cat) filtered = filtered.filter(m => m.category === cat);
+        renderMedicines(filtered);
+    }
+
+    function renderMedicines(medicines) {
+        document.getElementById('medicineGrid').innerHTML = medicines.map(m => `
+        <div class="medicine-card">
+            <div class="med-icon"><i class="fas fa-capsules"></i></div>
+            <h3>${m.name}</h3>
+            <div class="med-category">${m.category}</div>
+            <div class="med-desc">${m.description}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div class="med-price">₹${m.price}</div>
+                <div class="med-manufacturer">${m.manufacturer}</div>
+            </div>
+            <div class="qty-control">
+                <button onclick="updateQty(${m.id},-1)"><i class="fas fa-minus"></i></button>
+                <span id="qty-${m.id}">${cart[m.id]?.qty || 0}</span>
+                <button onclick="updateQty(${m.id},1)"><i class="fas fa-plus"></i></button>
+                <button class="btn btn-sm btn-blue" style="margin-left:auto;" onclick="addToCart(${m.id})">
+                    <i class="fas fa-cart-plus"></i> Add
+                </button>
+            </div>
+        </div>`).join('');
+    }
+
+    function updateQty(id, delta) {
+        const med = allMedicines.find(m => m.id === id);
+        if (!cart[id]) cart[id] = { med, qty: 0 };
+        cart[id].qty = Math.max(0, cart[id].qty + delta);
+        if (cart[id].qty === 0) delete cart[id];
+        document.getElementById('qty-' + id).textContent = cart[id]?.qty || 0;
+        updateCartUI();
+    }
+
+    function addToCart(id) {
+        const med = allMedicines.find(m => m.id === id);
+        if (!cart[id]) cart[id] = { med, qty: 0 };
+        cart[id].qty++;
+        document.getElementById('qty-' + id).textContent = cart[id].qty;
+        updateCartUI();
+        showAlert(`${med.name} added to cart!`);
+    }
+
+    function updateCartUI() {
+        const items = Object.values(cart);
+        const count = items.reduce((s, i) => s + i.qty, 0);
+        const total = items.reduce((s, i) => s + i.med.price * i.qty, 0);
+        document.getElementById('cartCount').textContent = count;
+        document.getElementById('cartTotal').textContent = '₹' + total.toFixed(2);
+    }
+
+    function openCart() {
+        document.getElementById('cartSidebar').classList.add('open');
+        document.getElementById('cartOverlay').classList.add('show');
+        renderCartItems();
+    }
+
+    function closeCart() {
+        document.getElementById('cartSidebar').classList.remove('open');
+        document.getElementById('cartOverlay').classList.remove('show');
+    }
+
+    function renderCartItems() {
+        const container = document.getElementById('cartItems');
+        const items = Object.values(cart);
+        if (items.length === 0) {
+            container.innerHTML = '<div style="text-align:center;padding:48px 0;color:var(--text-muted);"><i class="fas fa-shopping-basket" style="font-size:2rem;display:block;margin-bottom:12px;opacity:0.3;"></i><p>Your cart is empty</p></div>';
+            return;
+        }
+        container.innerHTML = items.map(i => `
+        <div class="cart-item">
+            <div>
+                <h4>${i.med.name}</h4>
+                <p>₹${i.med.price} × ${i.qty}</p>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <strong>₹${(i.med.price * i.qty).toFixed(2)}</strong>
+                <button onclick="removeFromCart(${i.med.id})" style="color:var(--danger);font-size:0.9rem;"><i class="fas fa-trash"></i></button>
+            </div>
+        </div>`).join('');
+    }
+
+    function removeFromCart(id) {
+        delete cart[id];
+        const el = document.getElementById('qty-' + id);
+        if (el) el.textContent = '0';
+        updateCartUI();
+        renderCartItems();
+    }
+
+    function checkoutCart() {
+        const items = Object.values(cart);
+        if (items.length === 0) { showAlert('Cart is empty!', 'error'); return; }
+        closeCart();
+        const total = items.reduce((s, i) => s + i.med.price * i.qty, 0);
+        const count = items.reduce((s, i) => s + i.qty, 0);
+        document.getElementById('checkoutItems').textContent = count + ' items';
+        document.getElementById('checkoutTotal').textContent = '₹' + total.toFixed(2);
+        document.getElementById('checkoutModal').classList.add('show');
+    }
+
+    function selectMedPayment(el, method) {
+        document.querySelectorAll('#checkoutModal .payment-option').forEach(o => o.classList.remove('selected'));
+        el.classList.add('selected');
+        medPaymentMethod = method;
+        document.getElementById('medUpiSection').style.display = method === 'UPI' ? 'block' : 'none';
+        document.getElementById('medCardSection').style.display = (method === 'Credit Card' || method === 'Debit Card') ? 'block' : 'none';
+    }
+
+    async function processOrder() {
+        const name = document.getElementById('orderName').value.trim();
+        const phone = document.getElementById('orderPhone').value.trim();
+        const address = document.getElementById('orderAddress').value.trim();
+
+        if (!name || !address) {
+            showAlert('Please enter your name and delivery address.', 'error');
+            return;
+        }
+
+        const items = Object.values(cart).map(i => ({ id: i.med.id, name: i.med.name, qty: i.qty, price: i.med.price }));
+        const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+
+        // UPI deep-link redirect
+        if (medPaymentMethod === 'UPI') {
+            const upiId = document.getElementById('medUpiId').value.trim() || 'mediconnect@upi';
+            const upiLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=MediConnect&am=${total.toFixed(2)}&cu=INR&tn=Medicine+Order`;
+            // Save order to backend
+            try {
+                await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items, total, payment_method: 'UPI', customer_name: name, customer_phone: phone, delivery_address: address, upi_id: upiId })
+                });
+            } catch { }
+            // Redirect to UPI app
+            window.location.href = upiLink;
+            // Fallback if on desktop: show success after short delay
+            setTimeout(() => {
+                closeCheckout();
+                cart = {};
+                updateCartUI();
+                renderMedicines(allMedicines);
+                showAlert(`✅ Order placed for ${name} at ${address}. Complete payment in your UPI app!`);
+            }, 2000);
+            return;
+        }
+
+        const btn = event.target.closest('button');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        btn.disabled = true;
+
+        try {
+            const res = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ items, total, payment_method: medPaymentMethod, customer_name: name, customer_phone: phone, delivery_address: address })
+            });
+            const data = await res.json();
+            closeCheckout();
+            cart = {};
+            updateCartUI();
+            renderMedicines(allMedicines);
+            showAlert(`✅ Order #${data.id} placed for ${name}!\nDelivery to: ${address}\nPayment of ₹${total.toFixed(2)} via ${medPaymentMethod}. Delivery in 2-3 hours.`);
+        } catch {
+            showAlert('Order failed. Please try again.', 'error');
+        }
+        btn.innerHTML = '<i class="fas fa-shield-alt"></i> Pay Securely';
+        btn.disabled = false;
+    }
+
+    function closeCheckout() {
+        document.getElementById('checkoutModal').classList.remove('show');
+    }
+</script>
+{% endblock %}

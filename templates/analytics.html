@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block title %}Analytics{% endblock %}
+{% block breadcrumb %}Analytics Dashboard{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-hero">
+    <div
+        style="max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+        <div>
+            <h1><i class="fas fa-chart-line"></i> Analytics Dashboard</h1>
+            <p>Patient outcomes, disease trends, and hospital performance — all in one view.</p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <span style="background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:20px;font-size:0.8rem;"><i
+                    class="fas fa-sync-alt"></i> Live Data</span>
+            <span style="background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:20px;font-size:0.8rem;"><i
+                    class="fas fa-calendar"></i> FY 2026</span>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <!-- KPIs -->
+    <div class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card">
+            <div class="kpi-icon">🏥</div>
+            <div class="kpi-value">—</div>
+            <div class="kpi-label">Total Patients</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon">✅</div>
+            <div class="kpi-value">—</div>
+            <div class="kpi-label">Success Rate (%)</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon">⏱️</div>
+            <div class="kpi-value">—</div>
+            <div class="kpi-label">Avg Wait (min)</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon">📹</div>
+            <div class="kpi-value">—</div>
+            <div class="kpi-label">Tele-Consultations</div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3><i class="fas fa-calendar-check" style="color:var(--primary)"></i> Appointment Outcomes (6 Months)</h3>
+            <canvas id="apptChart" height="220"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-virus" style="color:var(--danger)"></i> Disease Trend Distribution</h3>
+            <canvas id="diseaseChart" height="220"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-hospital" style="color:var(--success)"></i> Hospital Performance Ratings</h3>
+            <canvas id="hospitalChart" height="220"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-user-plus" style="color:var(--accent)"></i> Patient Growth (Monthly)</h3>
+            <canvas id="growthChart" height="220"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function loadAnalytics() {
+        const res = await fetch('/api/analytics');
+        const d = await res.json();
+
+        // KPIs
+        const kpis = d.kpis;
+        const kpiEls = document.querySelectorAll('#kpiGrid .kpi-value');
+        kpiEls[0].textContent = kpis.total_patients.toLocaleString('en-IN');
+        kpiEls[1].textContent = kpis.success_rate + '%';
+        kpiEls[2].textContent = kpis.avg_wait_min + ' min';
+        kpiEls[3].textContent = kpis.telemedicine_sessions.toLocaleString('en-IN');
+
+        // Appointment chart
+        new Chart(document.getElementById('apptChart'), {
+            type: 'bar',
+            data: {
+                labels: d.appointment_stats.labels,
+                datasets: [
+                    { label: 'Completed', data: d.appointment_stats.completed, backgroundColor: 'rgba(21,101,192,0.7)', borderRadius: 6 },
+                    { label: 'Cancelled', data: d.appointment_stats.cancelled, backgroundColor: 'rgba(198,40,40,0.5)', borderRadius: 6 }
+                ]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'top' } } }
+        });
+
+        // Disease donut
+        new Chart(document.getElementById('diseaseChart'), {
+            type: 'doughnut',
+            data: {
+                labels: d.disease_trends.labels,
+                datasets: [{ data: d.disease_trends.data, backgroundColor: ['#1565C0', '#C62828', '#00ACC1', '#F57C00', '#2E7D32', '#7B1FA2'], borderWidth: 2 }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'right' } } }
+        });
+
+        // Hospital bar
+        new Chart(document.getElementById('hospitalChart'), {
+            type: 'bar',
+            data: {
+                labels: d.hospital_performance.labels,
+                datasets: [{ label: 'Rating', data: d.hospital_performance.ratings, backgroundColor: 'rgba(0,172,193,0.7)', borderRadius: 6 }]
+            },
+            options: { responsive: true, indexAxis: 'y', scales: { x: { min: 3.5, max: 5 } }, plugins: { legend: { display: false } } }
+        });
+
+        // Growth line (mock)
+        new Chart(document.getElementById('growthChart'), {
+            type: 'line',
+            data: {
+                labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+                datasets: [{ label: 'New Patients', data: [980, 1120, 1050, 1380, 1520, 1750], borderColor: '#00ACC1', backgroundColor: 'rgba(0,172,193,0.1)', fill: true, tension: 0.4, borderWidth: 2, pointRadius: 5 }]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'top' } } }
+        });
+    }
+    loadAnalytics();
+</script>
+{% endblock %}

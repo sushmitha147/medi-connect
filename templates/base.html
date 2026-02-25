@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="MediConnect – India's comprehensive healthcare management platform. Emergency services, symptom checker, telemedicine, appointments, analytics and more.">
+    <title>{% block title %}MediConnect{% endblock %} | Healthcare Management</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+    <!-- ─── Sidebar Overlay (mobile) ──────────────── -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- ─── Sidebar Navigation ─────────────────────── -->
+    <aside class="sidebar" id="sidebar">
+        <!-- Logo -->
+        <div class="sidebar-logo">
+            <a href="/" class="sidebar-logo-link">
+                <div class="sidebar-logo-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <div class="sidebar-logo-text">
+                    <span>Medi<strong>Connect</strong></span>
+                    <small>Healthcare Platform</small>
+                </div>
+            </a>
+        </div>
+
+        <!-- Saffron stripe (Indian cultural accent) -->
+        <div class="sidebar-tricolor"></div>
+
+        <!-- Nav Links -->
+        <nav class="sidebar-nav">
+            <div class="sidebar-nav-label" data-i18n="Main Menu">Main Menu</div>
+            <a href="/" class="sidebar-link {% if request.path == '/' %}active{% endif %}" data-key="Home">
+                <i class="fas fa-home"></i><span data-i18n="Home">Home</span>
+            </a>
+            <a href="/emergency" class="sidebar-link {% if request.path == '/emergency' %}active{% endif %}"
+                data-key="Emergency">
+                <i class="fas fa-ambulance"></i><span data-i18n="Emergency 108">Emergency 108</span>
+            </a>
+            <a href="/symptoms" class="sidebar-link {% if request.path == '/symptoms' %}active{% endif %}"
+                data-key="Symptoms">
+                <i class="fas fa-stethoscope"></i><span data-i18n="Symptom Checker">Symptom Checker</span>
+            </a>
+            <a href="/appointments" class="sidebar-link {% if request.path == '/appointments' %}active{% endif %}"
+                data-key="Appointments">
+                <i class="fas fa-calendar-check"></i><span data-i18n="Appointments">Appointments</span>
+            </a>
+            <a href="/medicines" class="sidebar-link {% if request.path == '/medicines' %}active{% endif %}"
+                data-key="Medicines">
+                <i class="fas fa-pills"></i><span data-i18n="Medicines">Medicines</span>
+            </a>
+            <a href="/organ-donors" class="sidebar-link {% if request.path == '/organ-donors' %}active{% endif %}"
+                data-key="Organ Donors">
+                <i class="fas fa-heart"></i><span data-i18n="Organ Donors">Organ Donors</span>
+            </a>
+
+            <div class="sidebar-nav-label" style="margin-top:16px;" data-i18n="Digital Health">Digital Health</div>
+            <a href="/telemedicine" class="sidebar-link {% if request.path == '/telemedicine' %}active{% endif %}"
+                data-key="Telemedicine">
+                <i class="fas fa-video"></i><span data-i18n="Telemedicine">Telemedicine</span>
+            </a>
+            <a href="/patient-portal" class="sidebar-link {% if request.path == '/patient-portal' %}active{% endif %}"
+                data-key="Patient Portal">
+                <i class="fas fa-hospital-user"></i><span data-i18n="Patient Portal">Patient Portal</span>
+            </a>
+            <a href="/care-plans" class="sidebar-link {% if request.path == '/care-plans' %}active{% endif %}"
+                data-key="Care Plans">
+                <i class="fas fa-notes-medical"></i><span data-i18n="Care Plans">Care Plans</span>
+            </a>
+            <a href="/diet-lifestyle" class="sidebar-link {% if request.path == '/diet-lifestyle' %}active{% endif %}"
+                data-key="Diet & Lifestyle">
+                <i class="fas fa-apple-alt"></i><span data-i18n="Diet & Lifestyle">Diet &amp; Lifestyle</span>
+            </a>
+            <a href="/analytics" class="sidebar-link {% if request.path == '/analytics' %}active{% endif %}"
+                data-key="Analytics">
+                <i class="fas fa-chart-line"></i><span data-i18n="Analytics">Analytics</span>
+            </a>
+
+            <div class="sidebar-nav-label" style="margin-top:16px;" data-i18n="Account">Account</div>
+            <a href="/profile" class="sidebar-link {% if request.path == '/profile' %}active{% endif %}"
+                data-key="Profile">
+                <i class="fas fa-user-circle"></i><span data-i18n="My Profile">My Profile</span>
+            </a>
+            <a href="/upi-payment" class="sidebar-link {% if request.path == '/upi-payment' %}active{% endif %}"
+                data-key="UPI Payment">
+                <i class="fas fa-mobile-alt"></i><span data-i18n="UPI Payment">UPI Payment</span>
+            </a>
+            <!-- Sign In button -->
+            <a href="#" class="sidebar-link" onclick="openSignIn();return false;">
+                <i class="fas fa-sign-in-alt"></i><span>Sign In</span>
+            </a>
+        </nav>
+
+        <!-- Language Switcher -->
+        <div class="sidebar-lang">
+            <i class="fas fa-globe"></i>
+            <select id="langSwitcher" class="lang-switcher" onchange="switchLanguage(this.value)">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="ta">தமிழ்</option>
+                <option value="te">తెలుగు</option>
+                <option value="bn">বাংলা</option>
+                <option value="mr">मराठी</option>
+                <option value="gu">ગુજરાતી</option>
+                <option value="kn">ಕನ್ನಡ</option>
+                <option value="ml">മലയാളം</option>
+                <option value="pa">ਪੰਜਾਬੀ</option>
+                <option value="or">ଓଡ଼ିଆ</option>
+                <option value="as">অসমীয়া</option>
+            </select>
+        </div>
+
+        <!-- Emergency Button -->
+        <div class="sidebar-emergency">
+            <a href="/emergency" class="btn-emergency-sidebar">
+                <i class="fas fa-phone-alt"></i>
+                <span>Emergency 108</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ─── Top Bar (mobile hamburger + AI chat) ─── -->
+    <header class="topbar" id="topbar">
+        <button class="topbar-hamburger" id="hamburger" onclick="toggleSidebar()" title="Toggle Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a href="/" class="topbar-logo">
+            <i class="fas fa-heartbeat"></i> Medi<strong>Connect</strong>
+        </a>
+        <div class="topbar-actions">
+            <button class="btn-chatbot" id="chatToggle" onclick="toggleChat()" title="AI Assistant">
+                <i class="fas fa-robot"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- ─── Chatbot Widget ──────────────────────────── -->
+    <div class="chatbot-panel" id="chatPanel">
+        <div class="chatbot-header">
+            <div><i class="fas fa-robot"></i> MediConnect AI <span id="chatLangLabel"
+                    style="font-size:0.75rem;opacity:0.7;margin-left:6px;"></span></div>
+            <div style="display:flex;gap:6px;align-items:center;">
+                <button id="voiceOutputBtn" onclick="toggleVoiceOutput()" title="Toggle Voice"
+                    style="color:#fff;font-size:0.9rem;opacity:0.8;" class="voice-toggle-btn">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+                <button onclick="toggleChat()"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="chatbot-messages" id="chatMessages">
+            <div class="chat-msg bot">
+                <div class="chat-bubble">Hello! I'm your MediConnect AI assistant 🏥<br><br>
+                    I speak <strong>all Indian languages</strong>! Ask me in Hindi, Tamil, Telugu, Kannada or any
+                    language.<br><br>
+                    I can help with: hospitals, appointments, medicines, rural health services, PMJAY, ASHA workers,
+                    emergency info, and more.
+                </div>
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <button id="micBtn" onclick="startVoiceInput()" title="Voice Input"
+                style="background:var(--accent);width:36px;height:36px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="fas fa-microphone" id="micIcon"></i>
+            </button>
+            <input type="text" id="chatInput" placeholder="Ask me anything about health..."
+                onkeydown="if(event.key==='Enter')sendChat()">
+            <button onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- ─── Email OTP Sign-In Modal ──────────────── -->
+    <div class="modal-overlay" id="signInModal">
+        <div class="modal" style="max-width:420px;">
+            <div id="otpStep1">
+                <h2 style="margin-bottom:6px;"><i class="fas fa-envelope" style="color:var(--primary);"></i> Sign In
+                    with Email</h2>
+                <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:20px;">We'll send a secure one-time
+                    password to your email address.</p>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" class="form-input" id="otpEmail" placeholder="your@email.com"
+                        onkeydown="if(event.key==='Enter')sendOTP()">
+                </div>
+                <button class="btn btn-blue" style="width:100%;justify-content:center;" onclick="sendOTP()">
+                    <i class="fas fa-paper-plane"></i> Send OTP
+                </button>
+                <button class="btn" style="width:100%;justify-content:center;margin-top:8px;color:var(--text-muted);"
+                    onclick="closeSignIn()">Cancel</button>
+            </div>
+            <div id="otpStep2" style="display:none;">
+                <h2 style="margin-bottom:6px;"><i class="fas fa-key" style="color:var(--success);"></i> Enter OTP</h2>
+                <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:6px;">A 6-digit OTP has been sent to
+                    <strong id="otpEmailDisplay"></strong></p>
+                <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:20px;">Check your inbox (and spam
+                    folder).</p>
+                <div class="form-group">
+                    <label>One-Time Password</label>
+                    <input type="text" class="form-input" id="otpCode" placeholder="Enter 6-digit OTP" maxlength="6"
+                        onkeydown="if(event.key==='Enter')verifyOTP()">
+                </div>
+                <button class="btn btn-blue" style="width:100%;justify-content:center;" onclick="verifyOTP()">
+                    <i class="fas fa-check-circle"></i> Verify & Sign In
+                </button>
+                <button class="btn" style="width:100%;justify-content:center;margin-top:8px;color:var(--text-muted);"
+                    onclick="sendOTP()">
+                    <i class="fas fa-redo"></i> Resend OTP
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── Page Content ────────────────────────── -->
+    <main class="main-content">
+        {% if request.path != '/' %}
+        <div class="breadcrumb-bar">
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>{% block breadcrumb %}{% endblock %}</span>
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+
+        <!-- ─── Cross Navigation ────────────────── -->
+        <section class="cross-nav-section">
+            <div class="cross-nav-container">
+                <h2 data-i18n="Explore More Services">Explore More Services</h2>
+                <p data-i18n="Everything you need for your healthcare journey, all in one place.">Everything you need
+                    for your healthcare journey, all in one place.</p>
+                <div class="cross-nav-grid">
+                    <a href="/emergency" class="cross-nav-card {% if request.path == '/emergency' %}current{% endif %}">
+                        <i class="fas fa-ambulance"></i><span data-i18n="Emergency 108">Emergency 108</span>
+                    </a>
+                    <a href="/symptoms" class="cross-nav-card {% if request.path == '/symptoms' %}current{% endif %}">
+                        <i class="fas fa-stethoscope"></i><span data-i18n="Symptom Checker">Symptom Checker</span>
+                    </a>
+                    <a href="/telemedicine"
+                        class="cross-nav-card {% if request.path == '/telemedicine' %}current{% endif %}">
+                        <i class="fas fa-video"></i><span data-i18n="Telemedicine">Telemedicine</span>
+                    </a>
+                    <a href="/organ-donors"
+                        class="cross-nav-card {% if request.path == '/organ-donors' %}current{% endif %}">
+                        <i class="fas fa-heart"></i><span data-i18n="Organ Donors">Organ Donors</span>
+                    </a>
+                    <a href="/patient-portal"
+                        class="cross-nav-card {% if request.path == '/patient-portal' %}current{% endif %}">
+                        <i class="fas fa-hospital-user"></i><span data-i18n="Patient Portal">Patient Portal</span>
+                    </a>
+                    <a href="/appointments"
+                        class="cross-nav-card {% if request.path == '/appointments' %}current{% endif %}">
+                        <i class="fas fa-calendar-check"></i><span data-i18n="Appointments">Appointments</span>
+                    </a>
+                    <a href="/medicines" class="cross-nav-card {% if request.path == '/medicines' %}current{% endif %}">
+                        <i class="fas fa-pills"></i><span data-i18n="Medicines">Medicines</span>
+                    </a>
+                    <a href="/care-plans"
+                        class="cross-nav-card {% if request.path == '/care-plans' %}current{% endif %}">
+                        <i class="fas fa-notes-medical"></i><span data-i18n="Care Plans">Care Plans</span>
+                    </a>
+                    <a href="/diet-lifestyle"
+                        class="cross-nav-card {% if request.path == '/diet-lifestyle' %}current{% endif %}">
+                        <i class="fas fa-apple-alt"></i><span data-i18n="Diet &amp; Lifestyle">Diet &amp;
+                            Lifestyle</span>
+                    </a>
+                    <a href="/upi-payment"
+                        class="cross-nav-card {% if request.path == '/upi-payment' %}current{% endif %}">
+                        <i class="fas fa-mobile-alt"></i><span data-i18n="UPI Payment">UPI Payment</span>
+                    </a>
+                    <a href="/analytics" class="cross-nav-card {% if request.path == '/analytics' %}current{% endif %}">
+                        <i class="fas fa-chart-line"></i><span data-i18n="Analytics">Analytics</span>
+                    </a>
+                    <a href="/profile" class="cross-nav-card {% if request.path == '/profile' %}current{% endif %}">
+                        <i class="fas fa-user-circle"></i><span data-i18n="My Profile">My Profile</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── Footer ──────────────────────────────────── -->
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <h3><i class="fas fa-heartbeat"></i> MediConnect</h3>
+                        <p>India's trusted healthcare management platform — DISHA Compliant | IMC Act Aligned | Ayushman
+                            Bharat Ready. Connecting patients with quality healthcare services across the nation.</p>
+                        <div class="footer-compliance">
+                            <span class="compliance-badge"><i class="fas fa-shield-alt"></i> DISHA</span>
+                            <span class="compliance-badge"><i class="fas fa-certificate"></i> IMC Act</span>
+                            <span class="compliance-badge"><i class="fas fa-flag"></i> Ayushman Bharat</span>
+                        </div>
+                        <div class="footer-social">
+                            <a href="#"><i class="fab fa-facebook"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Quick Links</h4>
+                        <a href="/emergency">Emergency Services</a>
+                        <a href="/symptoms">Symptom Checker</a>
+                        <a href="/appointments">Book Appointment</a>
+                        <a href="/medicines">Order Medicine</a>
+                        <a href="/telemedicine">Telemedicine</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Digital Health</h4>
+                        <a href="/patient-portal">Patient Portal</a>
+                        <a href="/care-plans">Care Plans</a>
+                        <a href="/diet-lifestyle">Diet &amp; Lifestyle</a>
+                        <a href="/analytics">Analytics Dashboard</a>
+                        <a href="/organ-donors">Organ Donors</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4><i class="fas fa-envelope"></i> Contact Us</h4>
+                        <p><i class="fas fa-map-marker-alt"></i> 42, MG Road, Bengaluru, Karnataka 560001</p>
+                        <p><i class="fas fa-phone"></i> +91 80 4567 8900</p>
+                        <p><i class="fas fa-envelope"></i> support@mediconnect.in</p>
+                        <p><i class="fas fa-clock"></i> 24/7 Support Available</p>
+                        <p style="font-size:0.78rem;color:rgba(255,255,255,0.4);margin-top:12px;">Privacy Policy | Terms
+                            of Use | Cookie Policy</p>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2026 MediConnect Healthcare Pvt. Ltd. All rights reserved. | DISHA Compliant | <i
+                            class="fas fa-flag"></i> Made in India 🇮🇳</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Main JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

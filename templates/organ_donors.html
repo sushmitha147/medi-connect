@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% block title %}Organ Donors{% endblock %}
+{% block breadcrumb %}Organ Donors{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 100px;">
+    <div class="section-header">
+        <h2><i class="fas fa-heart" style="color:var(--danger);"></i> <span data-i18n="Organ Donors">Organ Donors</span>
+        </h2>
+        <div class="divider" style="background:var(--danger);"></div>
+        <p data-i18n="Register as an organ donor or find available organ donors.">Register as an organ donor or find
+            available organ donors across our partner hospitals — including KMC affiliated centres.</p>
+    </div>
+
+    <!-- ─── Stats Strip ────────────────────────── -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:36px;"
+        id="donorStats">
+        <div class="card" style="text-align:center;padding:20px;">
+            <div style="font-size:2rem;font-weight:800;color:var(--danger);" id="statDonors">--</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);" data-i18n="Registered Donors">Registered Donors
+            </div>
+        </div>
+        <div class="card" style="text-align:center;padding:20px;">
+            <div style="font-size:2rem;font-weight:800;color:var(--primary);" id="statOrgans">8</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);">Organ Types</div>
+        </div>
+        <div class="card" style="text-align:center;padding:20px;">
+            <div style="font-size:2rem;font-weight:800;color:var(--success);" id="statAvailable">--</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);">Available Now</div>
+        </div>
+        <div class="card" style="text-align:center;padding:20px;">
+            <div style="font-size:2rem;font-weight:800;color:#7B1FA2;" id="statKMC">3</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);" data-i18n="KMC Affiliated Hospitals">KMC Affiliated
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── Tabs ────────────────────────────────── -->
+    <div class="tab-group donor-tabs" style="margin-bottom:24px;">
+        <button class="tab-btn active" onclick="switchTab(this,'tab-donors','donor-tabs')" data-i18n="Organ Donors">❤️
+            Organ Donors</button>
+        <button class="tab-btn" onclick="switchTab(this,'tab-register','donor-tabs')" data-i18n="Register as Donor">✅
+            Register as Donor</button>
+    </div>
+
+    <!-- ─── Tab: Organ Donors ────────────────────── -->
+    <div id="tab-donors" class="tab-content active">
+        <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+            <input type="text" id="donorSearch" class="form-input" placeholder="Search by organ, city, blood group..."
+                style="flex:1;min-width:200px;" oninput="filterDonors()">
+            <select id="donorFilter" class="form-input" style="width:180px" onchange="filterDonors()">
+                <option value="">All Organs</option>
+                <option value="Kidney">Kidney</option>
+                <option value="Liver">Liver</option>
+                <option value="Heart">Heart</option>
+                <option value="Lungs">Lungs</option>
+                <option value="Cornea">Cornea</option>
+                <option value="Bone Marrow">Bone Marrow</option>
+                <option value="Pancreas">Pancreas</option>
+                <option value="Skin">Skin</option>
+            </select>
+        </div>
+        <div class="grid-2" id="donorList">
+            <p style="color:var(--text-muted);" data-i18n="Loading donors...">Loading donors...</p>
+        </div>
+    </div>
+
+    <!-- ─── Tab: Register ───────────────────────── -->
+    <div id="tab-register" class="tab-content">
+        <div class="card" style="max-width:600px;margin:0 auto;padding:32px;">
+            <h3 style="margin-bottom:6px;" data-i18n="Register as Organ Donor">Register as Organ Donor</h3>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:24px;"
+                data-i18n="Your decision to donate can save up to 8 lives.">Your decision to donate can save up to 8
+                lives. Join the national organ donation registry.</p>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label data-i18n="Full Name">Full Name</label>
+                    <input type="text" class="form-input" id="regName" placeholder="Your full name">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="Contact Number">Contact Number</label>
+                    <input type="tel" class="form-input" id="regContact" placeholder="+91 98765 43210">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" class="form-input" id="regEmail" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="Blood Group">Blood Group</label>
+                    <select class="form-input" id="regBlood">
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label data-i18n="City">City</label>
+                    <input type="text" class="form-input" id="regCity" placeholder="Your city">
+                </div>
+                <div class="form-group">
+                    <label>State</label>
+                    <input type="text" class="form-input" id="regState" placeholder="Your state">
+                </div>
+            </div>
+            <div class="form-group">
+                <label data-i18n="Organs to Donate">Organs to Donate</label>
+                <select class="form-input" id="regOrgan">
+                    <option value="Kidney">Kidney</option>
+                    <option value="Liver">Liver</option>
+                    <option value="Heart">Heart</option>
+                    <option value="Lungs">Lungs</option>
+                    <option value="Cornea">Cornea</option>
+                    <option value="Bone Marrow">Bone Marrow</option>
+                    <option value="Pancreas">Pancreas</option>
+                    <option value="Skin">Skin</option>
+                    <option value="All Organs">All Organs</option>
+                </select>
+            </div>
+            <div style="background:rgba(0,137,123,0.08);border-radius:12px;padding:16px;margin-bottom:20px;">
+                <p style="font-size:0.82rem;color:var(--text-muted);margin:0;"><i class="fas fa-info-circle"
+                        style="color:var(--primary);"></i>
+                    Your information is stored securely and will only be shared with accredited medical teams during
+                    critical need. Registration is voluntary and can be revoked anytime.</p>
+            </div>
+            <button class="btn btn-danger" onclick="registerDonor()" style="width:100%;justify-content:center;">
+                <i class="fas fa-heart"></i> <span data-i18n="Register as Donor">Register as Donor</span>
+            </button>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let allDonors = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadDonors();
+    });
+
+    async function loadDonors() {
+        try {
+            const res = await fetch('/api/organ-donors');
+            allDonors = await res.json();
+            document.getElementById('statDonors').textContent = allDonors.length;
+            const available = allDonors.filter(d => d.status === 'Available').length;
+            document.getElementById('statAvailable').textContent = available;
+            renderDonors(allDonors);
+        } catch (e) {
+            console.error('Donor load error:', e);
+        }
+    }
+
+    function renderDonors(donors) {
+        const container = document.getElementById('donorList');
+        container.innerHTML = '';
+        if (donors.length === 0) {
+            container.innerHTML = '<p style="color:var(--text-muted);">No donors found matching your search.</p>';
+            return;
+        }
+        donors.forEach(d => {
+            const statusClass = d.status === 'Available' ? 'badge-green' : d.status === 'Matched' ? 'badge-blue' : 'badge-orange';
+            const kmcBadge = d.hospital_kmc ? `<span style="font-size:0.7rem;padding:2px 8px;background:#7B1FA2;color:#fff;border-radius:12px;"><i class="fas fa-hospital"></i> KMC Affiliated</span>` : '';
+            const videoBadge = d.hospital_video ? `<span style="font-size:0.7rem;padding:2px 8px;background:#00897B;color:#fff;border-radius:12px;"><i class="fas fa-video"></i> Video Consult</span>` : '';
+            container.innerHTML += `
+            <div class="card" style="padding:20px;">
+                <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px;">
+                    <div>
+                        <h3 style="font-size:1rem;margin-bottom:4px;">${d.name}</h3>
+                        <p style="font-size:0.82rem;color:var(--text-muted);">${d.city} · Registered ${d.registered_date || 'N/A'}</p>
+                    </div>
+                    <span class="badge ${statusClass}">${d.status}</span>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+                    <span class="badge badge-red" style="font-size:0.78rem;"><i class="fas fa-heart"></i> ${d.organ}</span>
+                    <span class="badge badge-blue" style="font-size:0.78rem;">${d.blood_group}</span>
+                    ${kmcBadge} ${videoBadge}
+                </div>
+                ${d.hospital ? `<p style="font-size:0.82rem;color:var(--text-muted);"><i class="fas fa-hospital-alt"></i> ${d.hospital}</p>` : ''}
+                <div style="margin-top:12px;">
+                    <a href="tel:${d.contact}" class="btn btn-sm btn-blue"><i class="fas fa-phone"></i> Contact Donor</a>
+                </div>
+            </div>`;
+        });
+    }
+
+    function filterDonors() {
+        const query = document.getElementById('donorSearch').value.toLowerCase();
+        const organ = document.getElementById('donorFilter').value;
+        const filtered = allDonors.filter(d =>
+            (!organ || d.organ === organ) &&
+            (!query || d.name.toLowerCase().includes(query) || d.city.toLowerCase().includes(query) ||
+                d.blood_group.toLowerCase().includes(query) || d.organ.toLowerCase().includes(query))
+        );
+        renderDonors(filtered);
+    }
+
+    async function registerDonor() {
+        const name = document.getElementById('regName').value.trim();
+        const contact = document.getElementById('regContact').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const blood_group = document.getElementById('regBlood').value;
+        const city = document.getElementById('regCity').value.trim();
+        const organ = document.getElementById('regOrgan').value;
+
+        if (!name || !contact || !city) {
+            showAlert('Please fill all required fields', 'error');
+            return;
+        }
+        try {
+            const res = await fetch('/api/organ-donors/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, contact, email, blood_group, city, organ })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showAlert('🎉 ' + data.message + ' Your Donor ID: #' + data.id);
+                document.getElementById('regName').value = '';
+                document.getElementById('regContact').value = '';
+                document.getElementById('regEmail').value = '';
+                document.getElementById('regCity').value = '';
+                document.getElementById('regState').value = '';
+                loadDonors();
+                // Switch to donors tab
+                switchTab(document.querySelector('.donor-tabs .tab-btn'), 'tab-donors', 'donor-tabs');
+            }
+        } catch (e) {
+            showAlert('Registration failed. Please try again.', 'error');
+        }
+    }
+</script>
+{% endblock %}

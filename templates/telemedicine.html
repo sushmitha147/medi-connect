@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+{% block title %}Telemedicine – Video Consultation{% endblock %}
+{% block breadcrumb %}Telemedicine{% endblock %}
+
+{% block content %}
+<div class="tele-hero">
+    <h1><i class="fas fa-video"></i> <span data-i18n="Telemedicine">Telemedicine</span></h1>
+    <p data-i18n="Consult top doctors from home via secure video call. Available 24/7 across all specializations.">
+        Consult top doctors from home via secure video call. Available 24/7 across all specializations.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px;">
+        <span style="background:rgba(255,255,255,0.15);padding:6px 16px;border-radius:20px;font-size:0.82rem;"><i
+                class="fas fa-shield-alt"></i> End-to-End Encrypted</span>
+        <span style="background:rgba(255,255,255,0.15);padding:6px 16px;border-radius:20px;font-size:0.82rem;"><i
+                class="fas fa-mobile-alt"></i> UPI / Card / Wallet</span>
+        <span style="background:rgba(255,255,255,0.15);padding:6px 16px;border-radius:20px;font-size:0.82rem;"><i
+                class="fas fa-language"></i> 11 Indian Languages</span>
+        <span style="background:rgba(255,255,255,0.15);padding:6px 16px;border-radius:20px;font-size:0.82rem;"><i
+                class="fas fa-hospital"></i> KMC Affiliated Doctors</span>
+    </div>
+</div>
+
+<div class="section">
+    <!-- How It Works -->
+    <div class="section-header">
+        <h2 data-i18n="How It Works">How It Works</h2>
+        <div class="divider"></div>
+    </div>
+    <div class="grid-3" style="margin-bottom:56px;">
+        <div class="card feature-card">
+            <div class="card-icon" style="background:rgba(21,101,192,0.1);color:var(--primary);"><i
+                    class="fas fa-user-md"></i></div>
+            <h3 data-i18n="1. Choose a Doctor">1. Choose a Doctor</h3>
+            <p data-i18n="Browse specialists by field, language, and availability.">Browse specialists by field,
+                language, and availability. Filter by the language you speak.</p>
+        </div>
+        <div class="card feature-card">
+            <div class="card-icon" style="background:rgba(0,172,193,0.1);color:var(--accent);"><i
+                    class="fas fa-calendar-check"></i></div>
+            <h3 data-i18n="2. Book & Pay">2. Book &amp; Pay</h3>
+            <p data-i18n="Select an available slot and pay securely via UPI.">Select an available slot and pay securely
+                via UPI, credit card, net banking, or wallet.</p>
+        </div>
+        <div class="card feature-card">
+            <div class="card-icon" style="background:rgba(46,125,50,0.1);color:var(--success);"><i
+                    class="fas fa-video"></i></div>
+            <h3 data-i18n="3. Join Video Call">3. Join Video Call</h3>
+            <p data-i18n="Join your appointment from any device.">Join your appointment from any device. Get
+                e-prescription and follow-up reminders.</p>
+        </div>
+    </div>
+
+    <!-- Doctor Cards -->
+    <div class="section-header">
+        <h2 data-i18n="Available Doctors for Video Consultation">Available Doctors for Video Consultation</h2>
+        <div class="divider"></div>
+        <p data-i18n="All doctors are verified, licensed under the Indian Medical Council Act.">All doctors are
+            verified, licensed under the Indian Medical Council Act. 🎥 = Video Available · 🏥 = KMC Affiliated</p>
+    </div>
+
+    <!-- Filter Bar -->
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center;">
+        <span style="font-size:0.82rem;font-weight:600;color:var(--text-muted);">Specialization:</span>
+        <button class="slot-btn selected" onclick="filterSpec(this,'all')">All</button>
+        <button class="slot-btn" onclick="filterSpec(this,'Cardiologist')">Cardiologist</button>
+        <button class="slot-btn" onclick="filterSpec(this,'Neurologist')">Neurologist</button>
+        <button class="slot-btn" onclick="filterSpec(this,'General Physician')">General Physician</button>
+        <button class="slot-btn" onclick="filterSpec(this,'Dermatologist')">Dermatologist</button>
+        <button class="slot-btn" onclick="filterSpec(this,'Pediatrician')">Pediatrician</button>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;align-items:center;">
+        <span style="font-size:0.82rem;font-weight:600;color:var(--text-muted);">Language:</span>
+        <button class="slot-btn selected" id="langFilterAll" onclick="filterLang(this,'all')">All Languages</button>
+        <button class="slot-btn" onclick="filterLang(this,'Hindi')">हिन्दी</button>
+        <button class="slot-btn" onclick="filterLang(this,'Tamil')">தமிழ்</button>
+        <button class="slot-btn" onclick="filterLang(this,'Telugu')">తెలుగు</button>
+        <button class="slot-btn" onclick="filterLang(this,'Kannada')">ಕನ್ನಡ</button>
+        <button class="slot-btn" onclick="filterLang(this,'Malayalam')">മലയാളം</button>
+        <button class="slot-btn" onclick="filterLang(this,'Bengali')">বাংলা</button>
+    </div>
+
+    <div class="tele-cards" id="teleCards">
+        <div style="text-align:center;padding:48px;color:var(--text-muted);grid-column:1/-1;">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p style="margin-top:12px;" data-i18n="Loading available doctors...">Loading available doctors...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Booking Modal -->
+<div class="modal-overlay" id="telePayModal">
+    <div class="modal">
+        <h2><i class="fas fa-video" style="color:var(--primary)"></i> Book Video Consultation</h2>
+        <p id="teleDocName" style="text-align:center;color:var(--text-light);margin-bottom:4px;"></p>
+        <div id="teleDocMeta" style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;">
+        </div>
+        <div class="form-group">
+            <label>Select Date</label>
+            <input type="date" class="form-input" id="teleDate">
+        </div>
+        <div class="form-group">
+            <label>Your UPI ID (for UPI payment)</label>
+            <input type="text" class="form-input" id="teleUpiId" placeholder="yourname@gpay / @paytm / @ybl">
+        </div>
+        <div class="form-group">
+            <label>Payment Method</label>
+            <div class="payment-options" id="telePayOpts">
+                <div class="payment-option selected" data-method="UPI"><i class="fas fa-mobile-alt"></i><span>UPI</span>
+                </div>
+                <div class="payment-option" data-method="Card"><i class="fas fa-credit-card"></i><span>Card</span></div>
+                <div class="payment-option" data-method="Net Banking"><i class="fas fa-university"></i><span>Net
+                        Banking</span></div>
+                <div class="payment-option" data-method="Wallet"><i class="fas fa-wallet"></i><span>Wallet</span></div>
+            </div>
+        </div>
+        <p id="teleFeeLine"
+            style="text-align:center;font-weight:700;font-size:1.1rem;margin-bottom:20px;color:var(--primary);"></p>
+        <div style="display:flex;gap:12px;">
+            <button class="btn btn-blue" style="flex:1;" onclick="confirmTeleBooking()"><i class="fas fa-check"></i>
+                Confirm &amp; Pay</button>
+            <button class="btn" style="border:1px solid var(--border);" onclick="closeTelePay()">Cancel</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let allDoctors = [], activeSpec = 'all', activeLang = 'all';
+    let selectedTeleDoc = null, selectedTelePayment = 'UPI';
+
+    async function loadTeleDoctors() {
+        try {
+            const res = await fetch('/api/telemedicine-slots');
+            allDoctors = await res.json();
+            renderDoctors(allDoctors);
+        } catch (e) {
+            document.getElementById('teleCards').innerHTML =
+                '<p style="color:var(--text-muted);text-align:center;grid-column:1/-1;">Failed to load doctors. Please try again.</p>';
+        }
+    }
+
+    function getFilteredDoctors() {
+        return allDoctors.filter(d => {
+            const specMatch = activeSpec === 'all' || d.specialization === activeSpec;
+            const langMatch = activeLang === 'all' || d.languages.includes(activeLang);
+            return specMatch && langMatch;
+        });
+    }
+
+    function renderDoctors(docs) {
+        const container = document.getElementById('teleCards');
+        if (docs.length === 0) {
+            container.innerHTML = '<p style="color:var(--text-muted);text-align:center;grid-column:1/-1;">No doctors found matching your filters.</p>';
+            return;
+        }
+        container.innerHTML = docs.map(d => {
+            const videoBadge = d.video_consult
+                ? `<span style="padding:3px 10px;background:rgba(21,101,192,0.15);color:var(--primary);border-radius:12px;font-size:0.72rem;font-weight:600;"><i class="fas fa-video"></i> Video Available</span>`
+                : `<span style="padding:3px 10px;background:rgba(0,0,0,0.06);color:var(--text-muted);border-radius:12px;font-size:0.72rem;">Audio Only</span>`;
+            const kmcBadge = d.hospital_kmc
+                ? `<span style="padding:3px 10px;background:rgba(123,31,162,0.15);color:#7B1FA2;border-radius:12px;font-size:0.72rem;font-weight:600;"><i class="fas fa-hospital"></i> KMC Affiliated</span>`
+                : '';
+            const langTags = d.languages.map(l =>
+                `<span style="padding:2px 8px;border-radius:10px;font-size:0.7rem;background:var(--bg-body);border:1px solid var(--border-light);">${l}</span>`
+            ).join('');
+            return `
+            <div class="tele-card" data-spec="${d.specialization}">
+                <div class="tele-card-header">
+                    <div class="tele-avatar"><i class="fas fa-user-md"></i></div>
+                    <div>
+                        <h3>${d.name}</h3>
+                        <p>${d.specialization}</p>
+                    </div>
+                </div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;">
+                    ${videoBadge} ${kmcBadge}
+                </div>
+                <div class="tele-meta">
+                    <span><i class="fas fa-star" style="color:#F59E0B"></i> ${d.rating}</span>
+                    <span><i class="fas fa-briefcase-medical"></i> ${d.experience} yrs</span>
+                    <span><i class="fas fa-hospital-alt"></i> ${d.hospital}</span>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:4px;margin:8px 0;">
+                    <span style="font-size:0.75rem;color:var(--text-muted);margin-right:4px;"><i class="fas fa-language"></i></span>
+                    ${langTags}
+                </div>
+                <div class="tele-status"><span class="dot"></span> Next: ${d.next_available}</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+                    <span style="font-size:1.1rem;font-weight:700;color:var(--text);">₹${d.fee}</span>
+                    ${d.video_consult
+                    ? `<button class="btn btn-blue btn-sm" onclick='openTelePay(${JSON.stringify(JSON.stringify(d))})'>
+                               <i class="fas fa-video"></i> Book Video
+                           </button>`
+                    : `<button class="btn btn-sm" style="border:1px solid var(--border);" onclick='openTelePay(${JSON.stringify(JSON.stringify(d))})'>
+                               <i class="fas fa-phone"></i> Book Audio
+                           </button>`
+                }
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function filterSpec(btn, spec) {
+        document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        // re-activate lang filter btn
+        document.querySelectorAll('.slot-btn').forEach(b => {
+            if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${activeLang}'`)) b.classList.add('selected');
+        });
+        btn.classList.add('selected');
+        activeSpec = spec;
+        renderDoctors(getFilteredDoctors());
+    }
+
+    function filterLang(btn, lang) {
+        // Remove lang filter selected state only from lang buttons
+        document.querySelectorAll('.slot-btn').forEach(b => {
+            if (b.getAttribute('onclick') && b.getAttribute('onclick').startsWith('filterLang')) b.classList.remove('selected');
+        });
+        btn.classList.add('selected');
+        activeLang = lang;
+        renderDoctors(getFilteredDoctors());
+    }
+
+    function openTelePay(docJson) {
+        selectedTeleDoc = JSON.parse(docJson);
+        document.getElementById('teleDocName').textContent = `${selectedTeleDoc.name} · ${selectedTeleDoc.specialization}`;
+        const metaDiv = document.getElementById('teleDocMeta');
+        const kmcB = selectedTeleDoc.hospital_kmc ? `<span style="padding:3px 10px;background:rgba(123,31,162,0.15);color:#7B1FA2;border-radius:12px;font-size:0.78rem;"><i class="fas fa-hospital"></i> KMC</span>` : '';
+        const vidB = selectedTeleDoc.video_consult ? `<span style="padding:3px 10px;background:rgba(21,101,192,0.15);color:var(--primary);border-radius:12px;font-size:0.78rem;"><i class="fas fa-video"></i> Video</span>` : '';
+        const langB = selectedTeleDoc.languages.map(l => `<span style="padding:3px 8px;background:var(--bg-body);border:1px solid var(--border-light);border-radius:10px;font-size:0.72rem;">${l}</span>`).join('');
+        metaDiv.innerHTML = kmcB + vidB + langB;
+        document.getElementById('teleFeeLine').textContent = `Consultation Fee: ₹${selectedTeleDoc.fee}`;
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('teleDate').value = today;
+        document.getElementById('telePayModal').classList.add('show');
+        document.querySelectorAll('#telePayOpts .payment-option').forEach(opt => {
+            opt.onclick = function () {
+                document.querySelectorAll('#telePayOpts .payment-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedTelePayment = this.dataset.method;
+            };
+        });
+    }
+
+    function closeTelePay() {
+        document.getElementById('telePayModal').classList.remove('show');
+    }
+
+    async function confirmTeleBooking() {
+        if (!selectedTeleDoc) return;
+        const date = document.getElementById('teleDate').value;
+        const upiId = document.getElementById('teleUpiId').value.trim();
+
+        // If UPI selected, process UPI payment first
+        if (selectedTelePayment === 'UPI' && upiId) {
+            try {
+                const payRes = await fetch('/api/upi-payment', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: selectedTeleDoc.fee, upi_id: upiId, purpose: 'telemedicine', reference_id: selectedTeleDoc.id })
+                });
+                const payData = await payRes.json();
+                if (!payData.success) {
+                    showAlert('UPI payment failed: ' + payData.message, 'error');
+                    return;
+                }
+            } catch (e) { /* continue even if payment API fails in demo */ }
+        }
+
+        const res = await fetch('/api/appointments', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ doctor_id: selectedTeleDoc.id, date, time: '10:00', amount: selectedTeleDoc.fee, payment_method: selectedTelePayment })
+        });
+        const data = await res.json();
+        closeTelePay();
+        if (data.success) showAlert(`✅ Video consultation booked with ${selectedTeleDoc.name}! Join link will be sent via SMS & email.`);
+    }
+
+    loadTeleDoctors();
+</script>
+{% endblock %}

@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% block title %}Patient Portal{% endblock %}
+{% block breadcrumb %}Patient Portal{% endblock %}
+
+{% block content %}
+<div class="portal-hero">
+    <div style="max-width:1100px;margin:0 auto;">
+        <h1><i class="fas fa-hospital-user"></i> Patient Portal</h1>
+        <p>Your personal health dashboard — real-time updates, reminders, and health tips, all in one place.</p>
+    </div>
+</div>
+
+<div class="section">
+    <div class="portal-grid">
+        <!-- Real-time Updates -->
+        <div>
+            <div class="card" style="margin-bottom:24px;">
+                <h3 style="margin-bottom:16px;"><i class="fas fa-bell" style="color:var(--primary)"></i> Real-time
+                    Updates</h3>
+                <div id="updatesTimeline">
+                    <div style="text-align:center;padding:24px;color:var(--text-muted);"><i
+                            class="fas fa-spinner fa-spin"></i> Loading...</div>
+                </div>
+            </div>
+            <!-- Medication Adherence -->
+            <div class="card">
+                <h3 style="margin-bottom:16px;"><i class="fas fa-pills" style="color:var(--success)"></i> Medication
+                    Adherence</h3>
+                <div id="medicationList">
+                    <div class="timeline-item">
+                        <div class="timeline-dot green"></div>
+                        <div>
+                            <h4>Metformin 500mg</h4>
+                            <p>Taken today at 8:00 AM ✅</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot orange"></div>
+                        <div>
+                            <h4>Vitamin D3 60000IU</h4>
+                            <p>Due this Sunday — set a reminder</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot blue"></div>
+                        <div>
+                            <h4>Losartan 50mg</h4>
+                            <p>Taken today at 10:00 PM ✅</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reminders & Health Tips -->
+        <div>
+            <div class="card" style="margin-bottom:24px;">
+                <h3 style="margin-bottom:16px;"><i class="fas fa-calendar-alt" style="color:var(--warning)"></i>
+                    Appointment Reminders</h3>
+                <div id="remindersList">
+                    <div class="reminder-card"><i class="fas fa-stethoscope"></i>
+                        <div>
+                            <h4>Dr. Sanjay Gupta – Endocrinologist</h4>
+                            <p>Tomorrow, March 10, 2026 · 10:00 AM · Apollo Hospital</p>
+                        </div>
+                    </div>
+                    <div class="reminder-card"><i class="fas fa-flask"></i>
+                        <div>
+                            <h4>HbA1c Blood Test</h4>
+                            <p>March 15, 2026 · Fortis Diagnostic Lab</p>
+                        </div>
+                    </div>
+                    <div class="reminder-card"><i class="fas fa-eye"></i>
+                        <div>
+                            <h4>Annual Eye Exam</h4>
+                            <p>March 20, 2026 · Manipal Hospital</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom:16px;"><i class="fas fa-lightbulb" style="color:var(--saffron, #FF9933)"></i>
+                    Personalized Health Tips</h3>
+                <div id="featuredTip" style="margin-bottom:16px;"></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <span style="font-size:0.8rem;color:var(--text-muted);">All Tips (<span
+                            id="tipCount">0</span>)</span>
+                    <button class="btn btn-sm btn-blue" onclick="toggleAllTips()" id="showAllBtn"
+                        style="padding:6px 14px;font-size:0.78rem;">Show All</button>
+                </div>
+                <div id="allTipsList" style="display:none;max-height:400px;overflow-y:auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Results -->
+    <div class="card" style="margin-top:24px;">
+        <h3 style="margin-bottom:16px;"><i class="fas fa-file-medical" style="color:var(--accent)"></i> Recent Test
+            Results</h3>
+        <table class="data-table" id="testResultsTable">
+            <thead>
+                <tr>
+                    <th>Test</th>
+                    <th>Date</th>
+                    <th>Result</th>
+                    <th>Reference Range</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>HbA1c</td>
+                    <td>Feb 10, 2026</td>
+                    <td>6.8%</td>
+                    <td>4–5.6% (normal) · 5.7–6.4% (pre-diabetic)</td>
+                    <td><span class="badge badge-orange">Borderline</span></td>
+                </tr>
+                <tr>
+                    <td>Blood Pressure</td>
+                    <td>Feb 12, 2026</td>
+                    <td>128/82 mmHg</td>
+                    <td>&lt;120/80 mmHg</td>
+                    <td><span class="badge badge-orange">Watch</span></td>
+                </tr>
+                <tr>
+                    <td>Total Cholesterol</td>
+                    <td>Jan 28, 2026</td>
+                    <td>185 mg/dL</td>
+                    <td>&lt;200 mg/dL</td>
+                    <td><span class="badge badge-green">Normal</span></td>
+                </tr>
+                <tr>
+                    <td>Vitamin D</td>
+                    <td>Jan 28, 2026</td>
+                    <td>22 ng/mL</td>
+                    <td>30–100 ng/mL</td>
+                    <td><span class="badge badge-red">Low</span></td>
+                </tr>
+                <tr>
+                    <td>Fasting Blood Sugar</td>
+                    <td>Feb 5, 2026</td>
+                    <td>102 mg/dL</td>
+                    <td>70–99 mg/dL</td>
+                    <td><span class="badge badge-orange">Slightly High</span></td>
+                </tr>
+                <tr>
+                    <td>Thyroid TSH</td>
+                    <td>Jan 20, 2026</td>
+                    <td>2.4 mIU/L</td>
+                    <td>0.4–4.0 mIU/L</td>
+                    <td><span class="badge badge-green">Normal</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function loadPortalData() {
+        try {
+            const res = await fetch('/api/appointments');
+            const appts = await res.json();
+            const timeline = document.getElementById('updatesTimeline');
+            if (appts.length === 0) {
+                timeline.innerHTML = '<p style="color:var(--text-muted);font-size:0.88rem;">No updates yet. Book an appointment to get started.</p>';
+                return;
+            }
+            timeline.innerHTML = appts.slice(0, 5).map(a => `
+            <div class="timeline-item">
+                <div class="timeline-dot ${a.status === 'Confirmed' ? 'blue' : a.status === 'Completed' ? 'green' : 'orange'}"></div>
+                <div>
+                    <h4>Appointment with ${a.doctor || 'Doctor'}</h4>
+                    <p>${a.date} · ${a.time} · <span class="badge badge-${a.status === 'Confirmed' ? 'blue' : a.status === 'Completed' ? 'green' : 'orange'}">${a.status}</span></p>
+                </div>
+            </div>`).join('');
+        } catch { }
+    }
+
+    const tips = [
+        { icon: 'fa-walking', color: '#00897B', title: 'Daily Steps', text: 'Walk 10,000 steps daily — reduces cardiovascular risk by 20% and improves mood significantly.' },
+        { icon: 'fa-tint', color: '#1565C0', title: 'Hydration', text: 'Drink 8–10 glasses of water daily. Dehydration increases strain on kidneys and causes fatigue.' },
+        { icon: 'fa-bed', color: '#7B1FA2', title: 'Quality Sleep', text: '7–8 hours of quality sleep reduces risk of diabetes, hypertension, and supports immune function.' },
+        { icon: 'fa-apple-alt', color: '#2E7D32', title: 'Seasonal Fruits', text: 'Include seasonal fruits and vegetables — aim for 5 servings per day. Rich in antioxidants and fiber.' },
+        { icon: 'fa-om', color: '#F57C00', title: 'Meditation', text: '15 minutes of daily meditation reduces cortisol (stress hormone) and lowers blood pressure.' },
+        { icon: 'fa-sun', color: '#F9A825', title: 'Sunlight & Vitamin D', text: 'Get 15–20 min of morning sunlight daily. Boosts Vitamin D, mood, and strengthens bones.' },
+        { icon: 'fa-carrot', color: '#EF6C00', title: 'Eat the Rainbow', text: 'Eat colorful vegetables daily — each color provides different essential micronutrients your body needs.' },
+        { icon: 'fa-heartbeat', color: '#C62828', title: 'Heart Health', text: 'Check your blood pressure regularly. Even small reductions in BP significantly lower heart attack risk.' },
+        { icon: 'fa-dumbbell', color: '#1565C0', title: 'Strength Training', text: 'Add 2–3 sessions of strength training per week to maintain muscle mass and boost metabolism.' },
+        { icon: 'fa-lungs', color: '#00ACC1', title: 'Deep Breathing', text: '5 minutes of deep breathing exercises (pranayama) improves lung capacity and reduces anxiety.' },
+        { icon: 'fa-tooth', color: '#3949AB', title: 'Oral Health', text: 'Brush twice, floss daily. Poor oral health is linked to heart disease, diabetes, and respiratory issues.' },
+        { icon: 'fa-eye', color: '#00695C', title: '20-20-20 Rule', text: 'Every 20 minutes of screen time, look at something 20 feet away for 20 seconds — prevents eye strain.' },
+        { icon: 'fa-utensils', color: '#E65100', title: 'Mindful Eating', text: 'Eat slowly and without distractions. It takes 20 minutes for your brain to register fullness.' },
+        { icon: 'fa-smoking-ban', color: '#B71C1C', title: 'Quit Smoking', text: 'Quitting smoking reduces cardiovascular risk by 50% within 1 year and lung cancer risk over time.' },
+        { icon: 'fa-hands-helping', color: '#4CAF50', title: 'Social Connections', text: 'Strong social bonds increase life expectancy. Call a friend or family member today!' },
+        { icon: 'fa-brain', color: '#9C27B0', title: 'Mental Health', text: 'If you feel overwhelmed, seek help from a mental health professional. Mental health equals physical health.' },
+        { icon: 'fa-shield-alt', color: '#00897B', title: 'Preventive Checkups', text: 'Annual health checkups detect conditions early when they are most treatable. Book yours today.' },
+        { icon: 'fa-pepper-hot', color: '#D84315', title: 'Anti-Inflammatory Diet', text: 'Turmeric, ginger, and amla (Indian gooseberry) have powerful anti-inflammatory properties — include them daily.' },
+    ];
+
+    document.getElementById('tipCount').textContent = tips.length;
+
+    const featuredEl = document.getElementById('featuredTip');
+    let tipIdx = 0;
+
+    function showFeaturedTip() {
+        const t = tips[tipIdx % tips.length];
+        featuredEl.innerHTML = `
+            <div class="reminder-card" style="background:${t.color}15;border-left:4px solid ${t.color};border-radius:10px;padding:14px;">
+                <i class="fas ${t.icon}" style="color:${t.color};font-size:1.4rem;"></i>
+                <div>
+                    <h4 style="color:${t.color};margin-bottom:4px;">${t.title}</h4>
+                    <p style="font-size:0.88rem;">${t.text}</p>
+                </div>
+            </div>`;
+        tipIdx++;
+    }
+
+    function renderAllTips() {
+        const container = document.getElementById('allTipsList');
+        container.innerHTML = tips.map(t => `
+            <div class="reminder-card" style="background:${t.color}10;border-left:3px solid ${t.color};margin-bottom:8px;border-radius:8px;padding:12px;">
+                <i class="fas ${t.icon}" style="color:${t.color};"></i>
+                <div>
+                    <strong style="font-size:0.88rem;color:${t.color};">${t.title}</strong>
+                    <p style="font-size:0.82rem;margin-top:2px;">${t.text}</p>
+                </div>
+            </div>`).join('');
+    }
+
+    let allTipsVisible = false;
+    function toggleAllTips() {
+        allTipsVisible = !allTipsVisible;
+        const list = document.getElementById('allTipsList');
+        const btn = document.getElementById('showAllBtn');
+        if (allTipsVisible) {
+            renderAllTips();
+            list.style.display = 'block';
+            btn.textContent = 'Hide Tips';
+        } else {
+            list.style.display = 'none';
+            btn.textContent = 'Show All';
+        }
+    }
+
+    showFeaturedTip();
+    setInterval(showFeaturedTip, 5000);
+    loadPortalData();
+</script>
+{% endblock %}

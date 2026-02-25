@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- ─── Hero Section ──────────────────────────── -->
+<section class="hero">
+    <div class="hero-bg-animation">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+    <div class="hero-content">
+        <div class="hero-badge"><i class="fas fa-shield-alt"></i> DISHA Compliant · IMC Act Aligned · Ayushman Bharat
+            Ready</div>
+        <h1>Your Health, <span>Our Priority</span></h1>
+        <p>India's most trusted healthcare management platform. Access emergency services, consult doctors via
+            telemedicine, book appointments, track your health risk, and manage your care plan — all in one place.</p>
+        <div class="hero-buttons">
+            <a href="/emergency" class="btn btn-primary"><i class="fas fa-ambulance"></i> Emergency Services</a>
+            <a href="/telemedicine" class="btn btn-outline"><i class="fas fa-video"></i> Start Telemedicine</a>
+        </div>
+    </div>
+</section>
+
+<!-- ─── Stats Bar ─────────────────────────────── -->
+<div class="section" style="padding-top: 0;">
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-number">10+</div>
+            <div class="stat-label">Partner Hospitals</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">15+</div>
+            <div class="stat-label">Expert Doctors</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Emergency Support</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">22</div>
+            <div class="stat-label">Languages</div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── Features Section ──────────────────────── -->
+<section class="section">
+    <div class="section-header">
+        <h2>Our Healthcare Services</h2>
+        <div class="divider"></div>
+        <p>Comprehensive digital healthcare solutions designed for India, accessible in 22 official languages.</p>
+    </div>
+    <div class="features-grid">
+        <a href="/emergency" class="card feature-card">
+            <div class="card-icon"><i class="fas fa-ambulance"></i></div>
+            <h3>Emergency 108</h3>
+            <p>Live hospital map, ambulance booking, and track real-time arrival with estimated ETA.</p>
+        </a>
+        <a href="/symptoms" class="card feature-card">
+            <div class="card-icon" style="background:rgba(0,172,193,0.1);color:var(--accent);"><i
+                    class="fas fa-stethoscope"></i></div>
+            <h3>Symptom Checker</h3>
+            <p>AI-powered analysis with file uploads, blood bank search, and specialist recommendations.</p>
+        </a>
+        <a href="/telemedicine" class="card feature-card">
+            <div class="card-icon" style="background:rgba(21,101,192,0.12);color:#1565C0;"><i class="fas fa-video"></i>
+            </div>
+            <h3>Telemedicine</h3>
+            <p>Consult qualified doctors via video call from the comfort of your home — available 24/7.</p>
+        </a>
+        <a href="/patient-portal" class="card feature-card">
+            <div class="card-icon" style="background:rgba(46,125,50,0.1);color:var(--success);"><i
+                    class="fas fa-hospital-user"></i></div>
+            <h3>Patient Portal</h3>
+            <p>Real-time updates on appointments, test results, reminders, and health tips in one place.</p>
+        </a>
+        <a href="/care-plans" class="card feature-card">
+            <div class="card-icon" style="background:rgba(0,172,193,0.1);color:var(--accent);"><i
+                    class="fas fa-notes-medical"></i></div>
+            <h3>Care Plans</h3>
+            <p>Personalized care management with medication schedules, milestones, and progress tracking.</p>
+        </a>
+        <a href="/health-risk" class="card feature-card">
+            <div class="card-icon" style="background:rgba(198,40,40,0.1);color:var(--danger);"><i
+                    class="fas fa-shield-virus"></i></div>
+            <h3>Health Risk Assessment</h3>
+            <p>ML-powered risk scoring tool with personalized health insights and prevention strategies.</p>
+        </a>
+        <a href="/appointments" class="card feature-card">
+            <div class="card-icon" style="background:rgba(123,31,162,0.1);color:#7B1FA2;"><i
+                    class="fas fa-calendar-check"></i></div>
+            <h3>Book Appointment</h3>
+            <p>Schedule with top specialists — pay via UPI, credit card, net banking, or wallets.</p>
+        </a>
+        <a href="/medicines" class="card feature-card">
+            <div class="card-icon" style="background:rgba(245,124,0,0.1);color:var(--warning);"><i
+                    class="fas fa-pills"></i></div>
+            <h3>Order Medicine</h3>
+            <p>Browse medicines from top Indian manufacturers, add to cart, and get doorstep delivery.</p>
+        </a>
+        <a href="/analytics" class="card feature-card">
+            <div class="card-icon" style="background:rgba(21,101,192,0.1);color:var(--primary);"><i
+                    class="fas fa-chart-line"></i></div>
+            <h3>Analytics Dashboard</h3>
+            <p>Track patient outcomes, disease trends, and hospital performance with interactive charts.</p>
+        </a>
+    </div>
+</section>
+
+<!-- ─── Latest Updates ────────────────────────── -->
+<section class="section" style="background: #fff; max-width: 100%; padding-left: 0; padding-right: 0;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 32px;">
+        <div class="section-header">
+            <h2>Latest Updates</h2>
+            <div class="divider"></div>
+            <p>Stay informed with the latest healthcare news and platform updates.</p>
+        </div>
+        <div class="updates-grid">
+            <div class="card update-card">
+                <div class="update-icon blue"><i class="fas fa-video"></i></div>
+                <div>
+                    <h4>Telemedicine Now Live</h4>
+                    <p>Consult doctors from home via video call. Available across all specializations pan-India.</p>
+                    <div class="update-date">February 25, 2026</div>
+                </div>
+            </div>
+            <div class="card update-card">
+                <div class="update-icon green"><i class="fas fa-shield-alt"></i></div>
+                <div>
+                    <h4>DISHA Compliance Certified</h4>
+                    <p>MediConnect is now certified under the Digital Information Security in Healthcare Act (DISHA).
+                    </p>
+                    <div class="update-date">February 22, 2026</div>
+                </div>
+            </div>
+            <div class="card update-card">
+                <div class="update-icon orange"><i class="fas fa-chart-bar"></i></div>
+                <div>
+                    <h4>Analytics Dashboard Launched</h4>
+                    <p>Explore patient outcomes, disease trends, and hospital performance in our new analytics hub.</p>
+                    <div class="update-date">February 20, 2026</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── Reviews Slider ────────────────────────── -->
+<section class="section">
+    <div class="section-header">
+        <h2>What Our Patients Say</h2>
+        <div class="divider"></div>
+        <p>Trusted by thousands of patients across India.</p>
+    </div>
+    <div class="reviews-slider-wrapper">
+        <div class="reviews-track">
+            <div class="review-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p class="review-text">"MediConnect made it so easy to find a cardiologist near me. Booked and paid via
+                    UPI in minutes!"</p>
+                <div class="reviewer">
+                    <div class="reviewer-avatar">R</div>
+                    <div class="reviewer-info">
+                        <h5>Rahul Mehta</h5>
+                        <p>Delhi</p>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p class="review-text">"The emergency ambulance feature saved my father's life. Got an ambulance in 12
+                    minutes. Thank you! 🙏"</p>
+                <div class="reviewer">
+                    <div class="reviewer-avatar">P</div>
+                    <div class="reviewer-info">
+                        <h5>Priya Sharma</h5>
+                        <p>Mumbai</p>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                <p class="review-text">"The symptom checker accurately identified my condition and recommended the right
+                    specialist. Impressive AI!"</p>
+                <div class="reviewer">
+                    <div class="reviewer-avatar">A</div>
+                    <div class="reviewer-info">
+                        <h5>Arjun Reddy</h5>
+                        <p>Hyderabad</p>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p class="review-text">"Love the multilingual support! I can use the entire platform in Tamil. Very
+                    thoughtful for Indian users."</p>
+                <div class="reviewer">
+                    <div class="reviewer-avatar">L</div>
+                    <div class="reviewer-info">
+                        <h5>Lakshmi Iyer</h5>
+                        <p>Chennai</p>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p class="review-text">"The telemedicine feature is a game changer. Consulted a specialist from my
+                    village in Rajasthan — amazing!"</p>
+                <div class="reviewer">
+                    <div class="reviewer-avatar">S</div>
+                    <div class="reviewer-info">
+                        <h5>Suresh Rao</h5>
+                        <p>Jaipur</p>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                <p class="review-text">"The care plan helped me manage my diabetes effectively. My HbA1c dropped by 1.2
+                    points in 3 months!"</p>
+                <div class="reviewer">
+                    <div class="reviewer-avatar">V</div>
+                    <div class="reviewer-info">
+                        <h5>Vidya Nair</h5>
+                        <p>Kochi</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Duplicates for infinite loop -->
+            <div class="review-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p class="review-text">"MediConnect made it so easy to find a cardiologist near me. Booked and paid via
+                    UPI in minutes!"</p>
+                <div class="reviewer">
+                    <div class="reviewer-avatar">R</div>
+                    <div class="reviewer-info">
+                        <h5>Rahul Mehta</h5>
+                        <p>Delhi</p>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p class="review-text">"The emergency ambulance feature saved my father's life. Got an ambulance in 12
+                    minutes. Thank you! 🙏"</p>
+                <div class="reviewer">
+                    <div class="reviewer-avatar">P</div>
+                    <div class="reviewer-info">
+                        <h5>Priya Sharma</h5>
+                        <p>Mumbai</p>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                <p class="review-text">"The symptom checker accurately identified my condition and recommended the right
+                    specialist. Impressive AI!"</p>
+                <div class="reviewer">
+                    <div class="reviewer-avatar">A</div>
+                    <div class="reviewer-info">
+                        <h5>Arjun Reddy</h5>
+                        <p>Hyderabad</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

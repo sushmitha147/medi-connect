@@ -1,0 +1,424 @@
+{% extends 'base.html' %}
+{% block title %}Privacy & Security{% endblock %}
+{% block breadcrumb %}Privacy & Security{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 100px;">
+    <div class="section-header">
+        <h2><i class="fas fa-shield-alt" style="color:var(--primary);"></i> <span data-i18n="Privacy & Security">Privacy
+                &amp; Security</span></h2>
+        <div class="divider"></div>
+        <p data-i18n="Our cybersecurity framework protecting your health data.">MediConnect's enterprise-grade
+            cybersecurity framework protecting your health data — DISHA, PDPB &amp; ISO 27001 compliant.</p>
+    </div>
+
+    <!-- ─── Compliance Badges ─────────────────── -->
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:40px;">
+        <span
+            style="padding:10px 20px;background:linear-gradient(135deg,#1565C0,#0D47A1);color:#fff;border-radius:24px;font-size:0.85rem;font-weight:600;"><i
+                class="fas fa-gavel"></i> DISHA Compliant</span>
+        <span
+            style="padding:10px 20px;background:linear-gradient(135deg,#2E7D32,#1B5E20);color:#fff;border-radius:24px;font-size:0.85rem;font-weight:600;"><i
+                class="fas fa-shield-alt"></i> ISO 27001</span>
+        <span
+            style="padding:10px 20px;background:linear-gradient(135deg,#6A1B9A,#4A148C);color:#fff;border-radius:24px;font-size:0.85rem;font-weight:600;"><i
+                class="fas fa-certificate"></i> PDPB 2023</span>
+        <span
+            style="padding:10px 20px;background:linear-gradient(135deg,#E65100,#BF360C);color:#fff;border-radius:24px;font-size:0.85rem;font-weight:600;"><i
+                class="fas fa-credit-card"></i> PCI-DSS</span>
+        <span
+            style="padding:10px 20px;background:linear-gradient(135deg,#00695C,#004D40);color:#fff;border-radius:24px;font-size:0.85rem;font-weight:600;"><i
+                class="fas fa-flag"></i> IT Act 2000</span>
+    </div>
+
+    <!-- ─── Sections ─────────────────────────── -->
+    <div style="display:flex;flex-direction:column;gap:32px;">
+
+        <!-- 1. Data Encryption -->
+        <div class="card" style="padding:28px;">
+            <h3 style="margin-bottom:16px;color:var(--primary);"><i class="fas fa-key"></i> 1. Data Encryption</h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="font-weight:700;margin-bottom:6px;">🔒 Data in Transit</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">TLS 1.3 with HSTS headers ensures all API
+                        calls and web traffic are encrypted end-to-end. Certificates renewed via Let's Encrypt.</p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="font-weight:700;margin-bottom:6px;">💾 Data at Rest</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">AES-256-GCM encryption for database columns
+                        containing PII and medical records. SQLite WAL mode with encrypted volumes in production.</p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="font-weight:700;margin-bottom:6px;">🔑 UPI & Payments</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">UPI IDs are tokenised — never stored as plain
+                        text. RSA-2048 key exchange for payment tokens. PCI-DSS Level 1 compliant processing.</p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="font-weight:700;margin-bottom:6px;">📹 Telemedicine</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">WebRTC with DTLS-SRTP for video streams. Rooms
+                        are ephemeral — no video is stored. E2E encrypted via peer-to-peer channels.</p>
+                </div>
+            </div>
+            <div
+                style="margin-top:16px;padding:12px;background:rgba(25,118,210,0.06);border-radius:10px;font-size:0.82rem;">
+                <b>Tools & Stack:</b> OpenSSL · Python <code>cryptography</code> library · Fernet symmetric encryption ·
+                HashiCorp Vault for secrets management · AWS KMS (production)
+            </div>
+        </div>
+
+        <!-- 2. Authentication -->
+        <div class="card" style="padding:28px;">
+            <h3 style="margin-bottom:16px;color:var(--primary);"><i class="fas fa-user-lock"></i> 2. Authentication
+                System</h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="font-weight:700;margin-bottom:6px;">🔐 Multi-Factor Auth (MFA)</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">TOTP-based MFA (Google Authenticator / Authy)
+                        for doctors and admins. OTP via SMS (Twilio) for patients. Backup recovery codes generated at
+                        registration.</p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="font-weight:700;margin-bottom:6px;">🎫 Session Management</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">JWT tokens (RS256, 1h expiry) with refresh
+                        token rotation. Sessions invalidated on role change, password reset or suspicious login. Redis
+                        session store.</p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="font-weight:700;margin-bottom:6px;">🛡️ Password Security</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">Bcrypt (cost factor 12) hashing. Password
+                        strength enforced (min 12 chars, mix). Credential stuffing protected via HaveIBeenPwned API
+                        check at registration.</p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="font-weight:700;margin-bottom:6px;">🔑 OAuth 2.0 / ABHA</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">Sign in with Ayushman Bharat Health Account
+                        (ABHA) ID. OAuth 2.0 / OIDC via Google & ABDM. Federated identity with NHA guidelines.</p>
+                </div>
+            </div>
+            <div
+                style="margin-top:16px;padding:12px;background:rgba(25,118,210,0.06);border-radius:10px;font-size:0.82rem;">
+                <b>Tools:</b> Flask-Login · Flask-JWT-Extended · PyOTP · python-bcrypt · Redis · ABDM OAuth API
+            </div>
+        </div>
+
+        <!-- 3. Role-Based Access Control -->
+        <div class="card" style="padding:28px;">
+            <h3 style="margin-bottom:16px;color:var(--primary);"><i class="fas fa-users-cog"></i> 3. Role-Based Access
+                Control (RBAC)</h3>
+            <div style="overflow-x:auto;">
+                <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+                    <thead>
+                        <tr style="background:var(--primary);color:#fff;">
+                            <th style="padding:12px 16px;text-align:left;">Feature</th>
+                            <th style="padding:12px;text-align:center;">Patient</th>
+                            <th style="padding:12px;text-align:center;">Doctor</th>
+                            <th style="padding:12px;text-align:center;">Nurse</th>
+                            <th style="padding:12px;text-align:center;">Admin</th>
+                            <th style="padding:12px;text-align:center;">Auditor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background:var(--bg-body);">
+                            <td style="padding:10px 16px;">View Own Records</td>
+                            <td style="padding:10px;text-align:center;">✅</td>
+                            <td style="padding:10px;text-align:center;">✅</td>
+                            <td style="padding:10px;text-align:center;">✅</td>
+                            <td style="padding:10px;text-align:center;">✅</td>
+                            <td style="padding:10px;text-align:center;">🔍 Read-only</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px 16px;">Edit Patient Records</td>
+                            <td style="padding:10px;text-align:center;">❌</td>
+                            <td style="padding:10px;text-align:center;">✅</td>
+                            <td style="padding:10px;text-align:center;">Limited</td>
+                            <td style="padding:10px;text-align:center;">✅</td>
+                            <td style="padding:10px;text-align:center;">❌</td>
+                        </tr>
+                        <tr style="background:var(--bg-body);">
+                            <td style="padding:10px 16px;">Prescribe Medicines</td>
+                            <td style="padding:10px;text-align:center;">❌</td>
+                            <td style="padding:10px;text-align:center;">✅</td>
+                            <td style="padding:10px;text-align:center;">❌</td>
+                            <td style="padding:10px;text-align:center;">❌</td>
+                            <td style="padding:10px;text-align:center;">❌</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px 16px;">Access All Patient Data</td>
+                            <td style="padding:10px;text-align:center;">❌</td>
+                            <td style="padding:10px;text-align:center;">Own Patients</td>
+                            <td style="padding:10px;text-align:center;">Own Ward</td>
+                            <td style="padding:10px;text-align:center;">✅</td>
+                            <td style="padding:10px;text-align:center;">❌</td>
+                        </tr>
+                        <tr style="background:var(--bg-body);">
+                            <td style="padding:10px 16px;">UPI / Billing</td>
+                            <td style="padding:10px;text-align:center;">Own</td>
+                            <td style="padding:10px;text-align:center;">View</td>
+                            <td style="padding:10px;text-align:center;">❌</td>
+                            <td style="padding:10px;text-align:center;">✅</td>
+                            <td style="padding:10px;text-align:center;">🔍 Read-only</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px 16px;">Audit Logs</td>
+                            <td style="padding:10px;text-align:center;">❌</td>
+                            <td style="padding:10px;text-align:center;">❌</td>
+                            <td style="padding:10px;text-align:center;">❌</td>
+                            <td style="padding:10px;text-align:center;">✅</td>
+                            <td style="padding:10px;text-align:center;">✅</td>
+                        </tr>
+                        <tr style="background:var(--bg-body);">
+                            <td style="padding:10px 16px;">Video Telemedicine</td>
+                            <td style="padding:10px;text-align:center;">✅</td>
+                            <td style="padding:10px;text-align:center;">✅</td>
+                            <td style="padding:10px;text-align:center;">Limited</td>
+                            <td style="padding:10px;text-align:center;">✅</td>
+                            <td style="padding:10px;text-align:center;">❌</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div
+                style="margin-top:16px;padding:12px;background:rgba(25,118,210,0.06);border-radius:10px;font-size:0.82rem;">
+                <b>Tools:</b> Flask-Principal · Casbin (policy engine) · Attribute-Based Access Control (ABAC) for
+                field-level security · JWT role claims
+            </div>
+        </div>
+
+        <!-- 4. Database Security -->
+        <div class="card" style="padding:28px;">
+            <h3 style="margin-bottom:16px;color:var(--primary);"><i class="fas fa-database"></i> 4. Database Security
+            </h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="font-weight:700;margin-bottom:6px;">🔒 SQL Injection Prevention</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">SQLAlchemy ORM with parameterised queries
+                        throughout. Zero raw SQL. Input validation via WTForms + Marshmallow schemas. WAF rules for SQLi
+                        patterns.</p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="font-weight:700;margin-bottom:6px;">🗄️ Backup & Recovery</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">Automated encrypted backups every 6 hours
+                        (AES-256). 30-day retention with offsite replication. RTO: 4h, RPO: 6h for disaster recovery.
+                    </p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="font-weight:700;margin-bottom:6px;">📊 Audit Logging</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">All CRUD operations on patient records are
+                        timestamped and logged with user identity, IP, and action. Logs stored in append-only,
+                        tamper-evident format.</p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="font-weight:700;margin-bottom:6px;">🔐 Least Privilege</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">DB user accounts have minimal permissions per
+                        service. Separate read-only replica for analytics. No application uses root DB credentials.
+                        Secrets in Vault.</p>
+                </div>
+            </div>
+            <div
+                style="margin-top:16px;padding:12px;background:rgba(25,118,210,0.06);border-radius:10px;font-size:0.82rem;">
+                <b>Tools:</b> SQLAlchemy ORM · SQLCipher (SQLite encryption) · pgBadger / SQLite Audit · AWS RDS
+                encrypted snapshots (production)
+            </div>
+        </div>
+
+        <!-- 5. Legal Compliance (India) -->
+        <div class="card" style="padding:28px;">
+            <h3 style="margin-bottom:16px;color:var(--primary);"><i class="fas fa-gavel"></i> 5. Indian Legal Compliance
+            </h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+                <div
+                    style="padding:16px;background:linear-gradient(135deg,rgba(255,152,0,0.1),rgba(255,193,7,0.05));border-radius:12px;border-left:3px solid #FF9800;">
+                    <div style="font-weight:700;margin-bottom:6px;">📜 DISHA 2018</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">Digital Information Security in Healthcare
+                        Act. EHR stored with consent. Health data classified as sensitive information. Breach
+                        notification within 72 hours.</p>
+                </div>
+                <div
+                    style="padding:16px;background:linear-gradient(135deg,rgba(33,150,243,0.1),rgba(3,169,244,0.05));border-radius:12px;border-left:3px solid #2196F3;">
+                    <div style="font-weight:700;margin-bottom:6px;">🔏 PDPB 2023</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">Personal Data Protection Bill. Explicit
+                        patient consent for data processing. Right to access, correct, and erase data. Data localisation
+                        in India-based servers.</p>
+                </div>
+                <div
+                    style="padding:16px;background:linear-gradient(135deg,rgba(76,175,80,0.1),rgba(139,195,74,0.05));border-radius:12px;border-left:3px solid #4CAF50;">
+                    <div style="font-weight:700;margin-bottom:6px;">💻 IT Act 2000</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">Section 43A (data protection), Section 72A
+                        (breach penalty). Reasonable security practices per CERT-In standards. Incident reporting to
+                        CERT-In within 6 hours.</p>
+                </div>
+                <div
+                    style="padding:16px;background:linear-gradient(135deg,rgba(156,39,176,0.1),rgba(103,58,183,0.05));border-radius:12px;border-left:3px solid #9C27B0;">
+                    <div style="font-weight:700;margin-bottom:6px;">🏥 NMC / IMC Act</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">Telemedicine Practice Guidelines (2020).
+                        Registered doctors only for prescriptions. Patient consent for telemedicine. Location-based
+                        prescribing restrictions.</p>
+                </div>
+                <div
+                    style="padding:16px;background:linear-gradient(135deg,rgba(3,169,244,0.1),rgba(0,188,212,0.05));border-radius:12px;border-left:3px solid #03A9F4;">
+                    <div style="font-weight:700;margin-bottom:6px;">💳 RBI / NPCI (UPI)</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">NPCI UPI framework compliance. No storage of
+                        UPI PINs or payment credentials. Transaction limits per RBI guidelines. 2FA mandatory for
+                        payments.</p>
+                </div>
+                <div
+                    style="padding:16px;background:linear-gradient(135deg,rgba(255,87,34,0.1),rgba(255,152,0,0.05));border-radius:12px;border-left:3px solid #FF5722;">
+                    <div style="font-weight:700;margin-bottom:6px;">🏛️ ABDM / ABHA</div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">Ayushman Bharat Digital Mission compliant.
+                        ABHA ID integration for patient identity. Health Records (HR) module follows FHIR R4 standard.
+                        Consent artefact based sharing.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Cyberattack Protection -->
+        <div class="card" style="padding:28px;">
+            <h3 style="margin-bottom:16px;color:var(--primary);"><i class="fas fa-bug"></i> 6. Protection Against
+                Cyberattacks</h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;">
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span
+                            style="padding:4px 10px;background:#C62828;color:#fff;border-radius:8px;font-size:0.72rem;">HIGH
+                            RISK</span>
+                        <b>SQL Injection</b>
+                    </div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">✅ ORM parameterised queries · ModSecurity WAF
+                        · Input validation · Prepared statements only</p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span
+                            style="padding:4px 10px;background:#C62828;color:#fff;border-radius:8px;font-size:0.72rem;">HIGH
+                            RISK</span>
+                        <b>XSS Attacks</b>
+                    </div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">✅ Jinja2 auto-escaping ·
+                        Content-Security-Policy headers · DOMPurify on frontend · X-XSS-Protection header</p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span
+                            style="padding:4px 10px;background:#E65100;color:#fff;border-radius:8px;font-size:0.72rem;">MED
+                            RISK</span>
+                        <b>CSRF</b>
+                    </div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">✅ Flask-WTF CSRF tokens on all forms ·
+                        SameSite=Strict cookies · Origin header validation</p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span
+                            style="padding:4px 10px;background:#C62828;color:#fff;border-radius:8px;font-size:0.72rem;">HIGH
+                            RISK</span>
+                        <b>DDoS / Brute Force</b>
+                    </div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">✅ Cloudflare DDoS protection · Flask-Limiter
+                        (rate limiting) · Account lockout after 5 fails · reCAPTCHA v3</p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span
+                            style="padding:4px 10px;background:#E65100;color:#fff;border-radius:8px;font-size:0.72rem;">MED
+                            RISK</span>
+                        <b>Data Breach</b>
+                    </div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">✅ AES-256 at rest · TLS 1.3 in transit ·
+                        Tokenised PII · Honeypot decoy records · Real-time anomaly alerts via SIEM</p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span
+                            style="padding:4px 10px;background:#C62828;color:#fff;border-radius:8px;font-size:0.72rem;">HIGH
+                            RISK</span>
+                        <b>Ransomware</b>
+                    </div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">✅ Immutable backups (S3 Object Lock) · Network
+                        segmentation · Endpoint protection (CrowdStrike) · IR playbook</p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span
+                            style="padding:4px 10px;background:#F57C00;color:#fff;border-radius:8px;font-size:0.72rem;">LOW-MED</span>
+                        <b>API Abuse</b>
+                    </div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">✅ API key authentication · Rate limiting per
+                        endpoint · JWT expiry · Swagger hidden in production · API versioning</p>
+                </div>
+                <div style="padding:16px;background:var(--bg-body);border-radius:12px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span
+                            style="padding:4px 10px;background:#E65100;color:#fff;border-radius:8px;font-size:0.72rem;">MED
+                            RISK</span>
+                        <b>Insecure Uploads</b>
+                    </div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);">✅ File type whitelist (PDF/JPEG/PNG only) ·
+                        ClamAV virus scan on upload · Signed S3 URLs with 15-min expiry · No execution directory</p>
+                </div>
+            </div>
+            <div
+                style="margin-top:16px;padding:12px;background:rgba(25,118,210,0.06);border-radius:10px;font-size:0.82rem;">
+                <b>Security Stack:</b> Cloudflare · ModSecurity WAF · OWASP ZAP (pentesting) · Bandit (Python SAST) ·
+                Snyk (dependency scanning) · Nikto · Nmap · OWASP Top 10 checklist · ELK Stack (SIEM)
+            </div>
+        </div>
+
+        <!-- Security Status Live -->
+        <div class="card"
+            style="padding:28px;background:linear-gradient(135deg,rgba(25,118,210,0.06),rgba(0,188,212,0.04));">
+            <h3 style="margin-bottom:20px;" data-i18n="Live Security Status">🔐 Live Security Status</h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">
+                <div style="text-align:center;">
+                    <div
+                        style="width:60px;height:60px;border-radius:50%;background:#E8F5E9;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-lock" style="color:#2E7D32;font-size:1.4rem;"></i>
+                    </div>
+                    <div style="font-weight:700;color:#2E7D32;">Active</div>
+                    <div style="font-size:0.78rem;color:var(--text-muted);">TLS Encryption</div>
+                </div>
+                <div style="text-align:center;">
+                    <div
+                        style="width:60px;height:60px;border-radius:50%;background:#E8F5E9;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-shield-alt" style="color:#2E7D32;font-size:1.4rem;"></i>
+                    </div>
+                    <div style="font-weight:700;color:#2E7D32;">Active</div>
+                    <div style="font-size:0.78rem;color:var(--text-muted);">WAF Protection</div>
+                </div>
+                <div style="text-align:center;">
+                    <div
+                        style="width:60px;height:60px;border-radius:50%;background:#E8F5E9;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-database" style="color:#2E7D32;font-size:1.4rem;"></i>
+                    </div>
+                    <div style="font-weight:700;color:#2E7D32;">Encrypted</div>
+                    <div style="font-size:0.78rem;color:var(--text-muted);">Database</div>
+                </div>
+                <div style="text-align:center;">
+                    <div
+                        style="width:60px;height:60px;border-radius:50%;background:#E8F5E9;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-clipboard-list" style="color:#2E7D32;font-size:1.4rem;"></i>
+                    </div>
+                    <div style="font-weight:700;color:#2E7D32;">Logging</div>
+                    <div style="font-size:0.78rem;color:var(--text-muted);">Audit Trail</div>
+                </div>
+                <div style="text-align:center;">
+                    <div
+                        style="width:60px;height:60px;border-radius:50%;background:#E8F5E9;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-gavel" style="color:#2E7D32;font-size:1.4rem;"></i>
+                    </div>
+                    <div style="font-weight:700;color:#2E7D32;">Compliant</div>
+                    <div style="font-size:0.78rem;color:var(--text-muted);">DISHA / PDPB</div>
+                </div>
+                <div style="text-align:center;">
+                    <div
+                        style="width:60px;height:60px;border-radius:50%;background:#FFF9C4;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;">
+                        <i class="fas fa-user-shield" style="color:#F9A825;font-size:1.4rem;"></i>
+                    </div>
+                    <div style="font-weight:700;color:#F9A825;">Demo Mode</div>
+                    <div style="font-size:0.78rem;color:var(--text-muted);">MFA (disabled in demo)</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

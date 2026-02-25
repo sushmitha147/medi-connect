@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% block title %}Health Risk Assessment{% endblock %}
+{% block breadcrumb %}Health Risk Assessment{% endblock %}
+
+{% block content %}
+<div class="hra-hero">
+    <div style="max-width:800px;margin:0 auto;text-align:center;">
+        <h1><i class="fas fa-shield-virus"></i> Health Risk Assessment</h1>
+        <p>Answer a few questions to get your personalized health risk score and ML-powered prevention strategies.</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
+            <span style="background:rgba(255,255,255,0.15);padding:5px 14px;border-radius:20px;font-size:0.78rem;"><i
+                    class="fas fa-lock"></i> Private & Secure</span>
+            <span style="background:rgba(255,255,255,0.15);padding:5px 14px;border-radius:20px;font-size:0.78rem;"><i
+                    class="fas fa-brain"></i> ML-Powered</span>
+            <span style="background:rgba(255,255,255,0.15);padding:5px 14px;border-radius:20px;font-size:0.78rem;"><i
+                    class="fas fa-shield-alt"></i> DISHA Compliant</span>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="hra-form" id="hraForm">
+        <h2><i class="fas fa-clipboard-list" style="color:var(--primary)"></i> Personal Health Questionnaire</h2>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Age (years)</label>
+                <input type="number" class="form-input" id="hraAge" placeholder="e.g. 35" min="10" max="100">
+            </div>
+            <div class="form-group">
+                <label>Height (cm)</label>
+                <input type="number" class="form-input" id="hraHeight" placeholder="e.g. 170" min="100" max="220">
+            </div>
+            <div class="form-group">
+                <label>Weight (kg)</label>
+                <input type="number" class="form-input" id="hraWeight" placeholder="e.g. 72" min="20" max="200">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Exercise frequency per week</label>
+            <select class="form-input" id="hraExercise">
+                <option value="0">None – I rarely exercise</option>
+                <option value="1">1–2 times per week</option>
+                <option value="3" selected>3–4 times per week</option>
+                <option value="5">5+ times per week</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Select all that apply to you</label>
+            <div class="hra-checkbox-grid">
+                <div class="hra-check"><input type="checkbox" id="hraSmoker"><label for="hraSmoker"><i
+                            class="fas fa-smoking"></i> Current smoker</label></div>
+                <div class="hra-check"><input type="checkbox" id="hraDiabetic"><label for="hraDiabetic"><i
+                            class="fas fa-syringe"></i> Diagnosed with Diabetes</label></div>
+                <div class="hra-check"><input type="checkbox" id="hraHypertensive"><label for="hraHypertensive"><i
+                            class="fas fa-heart"></i> Diagnosed with Hypertension</label></div>
+                <div class="hra-check"><input type="checkbox" id="hraFamily"><label for="hraFamily"><i
+                            class="fas fa-dna"></i> Family history of heart disease / cancer</label></div>
+            </div>
+        </div>
+
+        <button class="btn btn-blue" style="width:100%;justify-content:center;font-size:1rem;"
+            onclick="calculateRisk()">
+            <i class="fas fa-calculator"></i> Calculate My Risk Score
+        </button>
+    </div>
+
+    <!-- Results -->
+    <div class="risk-result" id="riskResult">
+        <div style="text-align:center;margin-bottom:24px;">
+            <div class="risk-score-ring" id="riskRing">
+                <span class="score-num" id="riskScoreNum">0</span>
+                <span class="score-label">/ 100</span>
+            </div>
+            <span class="risk-level-badge" id="riskLevelBadge">—</span>
+            <h2 style="margin-top:12px;">Your Health Risk Profile</h2>
+        </div>
+
+        <div class="grid-2" style="gap:24px;">
+            <div>
+                <h3 style="font-size:1rem;margin-bottom:14px;"><i class="fas fa-lightbulb"
+                        style="color:var(--warning)"></i> Personalized Insights</h3>
+                <ul class="insights-list" id="insightsList"></ul>
+            </div>
+            <div>
+                <h3 style="font-size:1rem;margin-bottom:14px;"><i class="fas fa-check-circle"
+                        style="color:var(--success)"></i> Recommendations</h3>
+                <ul class="insights-list" id="recsList"></ul>
+            </div>
+        </div>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;justify-content:center;">
+            <a href="/appointments" class="btn btn-blue"><i class="fas fa-calendar-check"></i> Book Health Checkup</a>
+            <a href="/care-plans" class="btn" style="background:var(--success);color:#fff;"><i
+                    class="fas fa-notes-medical"></i> Get a Care Plan</a>
+            <button class="btn" style="border:1px solid var(--border);"
+                onclick="document.getElementById('hraForm').scrollIntoView({behavior:'smooth'})"><i
+                    class="fas fa-redo"></i> Retake Assessment</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function calculateRisk() {
+        const age = parseInt(document.getElementById('hraAge').value);
+        const height = parseInt(document.getElementById('hraHeight').value);
+        const weight = parseInt(document.getElementById('hraWeight').value);
+        const exercise = parseInt(document.getElementById('hraExercise').value);
+        const smoker = document.getElementById('hraSmoker').checked;
+        const diabetic = document.getElementById('hraDiabetic').checked;
+        const hypertensive = document.getElementById('hraHypertensive').checked;
+        const family_history = document.getElementById('hraFamily').checked;
+
+        if (!age || !height || !weight) { showAlert('Please fill in age, height, and weight.', 'error'); return; }
+        const bmi = parseFloat((weight / ((height / 100) ** 2)).toFixed(1));
+
+        const res = await fetch('/api/health-risk', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ age, bmi, smoker, diabetic, hypertensive, family_history, exercise_per_week: exercise })
+        });
+        const data = await res.json();
+        if (!data.success) return;
+
+        // Animate score
+        const numEl = document.getElementById('riskScoreNum');
+        let current = 0;
+        const target = data.risk_score;
+        const interval = setInterval(() => {
+            current = Math.min(current + 2, target);
+            numEl.textContent = current;
+            if (current >= target) clearInterval(interval);
+        }, 30);
+
+        // Color the ring
+        const ring = document.getElementById('riskRing');
+        const colors = { Low: '#2E7D32', Moderate: '#F57C00', High: '#C62828' };
+        ring.style.borderColor = colors[data.risk_level] || '#1565C0';
+        numEl.style.color = colors[data.risk_level] || '#1565C0';
+
+        // Badge
+        const badge = document.getElementById('riskLevelBadge');
+        badge.textContent = data.risk_level + ' Risk';
+        badge.className = 'risk-level-badge risk-' + data.risk_level.toLowerCase();
+
+        // Insights
+        document.getElementById('insightsList').innerHTML = data.insights.map(i =>
+            `<li><i class="fas fa-exclamation-circle"></i>${i}</li>`).join('');
+        document.getElementById('recsList').innerHTML = data.recommendations.map(r =>
+            `<li><i class="fas fa-check-circle"></i>${r}</li>`).join('');
+
+        document.getElementById('riskResult').classList.add('show');
+        document.getElementById('riskResult').scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+{% endblock %}

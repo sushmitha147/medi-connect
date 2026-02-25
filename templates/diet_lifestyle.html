@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% block title %}Diet & Lifestyle Plans{% endblock %}
+{% block breadcrumb %}Diet & Lifestyle{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 100px;">
+    <div class="section-header">
+        <h2><i class="fas fa-apple-alt" style="color:var(--success);"></i> <span data-i18n="Diet & Lifestyle Plans">Diet
+                &amp; Lifestyle Plans</span></h2>
+        <div class="divider" style="background:var(--success);"></div>
+        <p data-i18n="Personalized Indian diet plans and lifestyle habits for your health condition.">Personalized
+            Indian diet plans and lifestyle habits tailored to your health condition and BMI.</p>
+    </div>
+
+    <!-- ─── Condition Selector ────────────────── -->
+    <div class="card" style="padding:28px;margin-bottom:32px;">
+        <h3 style="margin-bottom:16px;" data-i18n="Select Your Health Profile">Select Your Health Profile</h3>
+        <div class="form-row" style="align-items:flex-end;">
+            <div class="form-group">
+                <label data-i18n="Health Condition">Health Condition</label>
+                <select id="conditionSelect" class="form-input" onchange="loadDietPlan()">
+                    <option value="general">General Wellness</option>
+                    <option value="diabetes">Diabetes (Type 2)</option>
+                    <option value="hypertension">Hypertension (High BP)</option>
+                    <option value="cardiac">Cardiac Health</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label data-i18n="BMI Category">BMI Category</label>
+                <select id="bmiSelect" class="form-input" onchange="loadDietPlan()">
+                    <option value="normal">Normal (18.5 – 24.9)</option>
+                    <option value="overweight">Overweight (25 – 29.9)</option>
+                    <option value="obese">Obese (30+)</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex:0 0 auto;">
+                <label>&nbsp;</label>
+                <button class="btn btn-blue" onclick="loadDietPlan()"><i class="fas fa-search"></i> Get Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── Diet Plan Output ─────────────────── -->
+    <div id="dietPlanContainer">
+        <p style="color:var(--text-muted);text-align:center;"
+            data-i18n="Select your health profile above to view your personalized diet plan.">Select your health profile
+            above to view your personalized diet plan.</p>
+    </div>
+
+    <!-- ─── Lifestyle Tips Card ─────────────── -->
+    <div id="lifestyleContainer" style="display:none;margin-top:32px;">
+        <h3 style="margin-bottom:16px;" data-i18n="Lifestyle Habits & Tips">🏃 Lifestyle Habits &amp; Tips</h3>
+        <div id="lifestypeTipsList" class="grid-2"></div>
+    </div>
+
+    <!-- ─── General Wellness Tips ────────────── -->
+    <div style="margin-top:40px;">
+        <h3 style="margin-bottom:16px;" data-i18n="General Wellness Guidelines">General Wellness Guidelines</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+            <div class="card" style="padding:20px;text-align:center;">
+                <i class="fas fa-tint" style="font-size:2rem;color:#1565C0;margin-bottom:10px;"></i>
+                <h4 data-i18n="Hydration">Hydration</h4>
+                <p style="font-size:0.85rem;color:var(--text-muted);"
+                    data-i18n="Drink 8-10 glasses of water daily. More if you exercise or it's hot.">Drink 8–10 glasses
+                    of water daily. More if you exercise or during hot weather.</p>
+            </div>
+            <div class="card" style="padding:20px;text-align:center;">
+                <i class="fas fa-moon" style="font-size:2rem;color:#5C35CC;margin-bottom:10px;"></i>
+                <h4 data-i18n="Sleep">Sleep</h4>
+                <p style="font-size:0.85rem;color:var(--text-muted);"
+                    data-i18n="7-8 hours of quality sleep reduces stress and improves immunity.">7–8 hours of quality
+                    sleep reduces stress hormones and improves immunity significantly.</p>
+            </div>
+            <div class="card" style="padding:20px;text-align:center;">
+                <i class="fas fa-running" style="font-size:2rem;color:var(--success);margin-bottom:10px;"></i>
+                <h4 data-i18n="Exercise">Exercise</h4>
+                <p style="font-size:0.85rem;color:var(--text-muted);"
+                    data-i18n="30 minutes of moderate activity 5 days a week is the minimum.">30 minutes of moderate
+                    activity (walk, yoga, cycling) 5 days a week is the recommended minimum.</p>
+            </div>
+            <div class="card" style="padding:20px;text-align:center;">
+                <i class="fas fa-smile" style="font-size:2rem;color:#F57C00;margin-bottom:10px;"></i>
+                <h4 data-i18n="Mental Health">Mental Health</h4>
+                <p style="font-size:0.85rem;color:var(--text-muted);"
+                    data-i18n="Practice mindfulness, limit social media, maintain social connections.">Practice
+                    mindfulness, limit social media to 2h/day, nurture social connections.</p>
+            </div>
+            <div class="card" style="padding:20px;text-align:center;">
+                <i class="fas fa-ban" style="font-size:2rem;color:var(--danger);margin-bottom:10px;"></i>
+                <h4 data-i18n="Avoid">Avoid</h4>
+                <p style="font-size:0.85rem;color:var(--text-muted);"
+                    data-i18n="Smoking, excessive alcohol, processed foods, excessive screen time.">Smoking, excessive
+                    alcohol, ultra-processed foods, and prolonged sitting (take breaks every hour).</p>
+            </div>
+            <div class="card" style="padding:20px;text-align:center;">
+                <i class="fas fa-calendar-check" style="font-size:2rem;color:var(--primary);margin-bottom:10px;"></i>
+                <h4 data-i18n="Regular Check-ups">Regular Check-ups</h4>
+                <p style="font-size:0.85rem;color:var(--text-muted);"
+                    data-i18n="Annual health check-up and screenings are essential.">Annual health check-up, blood
+                    tests, BP monitoring, and cancer screenings as per age.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── CTA ──────────────────────────────── -->
+    <div
+        style="text-align:center;margin-top:40px;padding:32px;background:linear-gradient(135deg,rgba(25,118,210,0.08),rgba(0,188,212,0.08));border-radius:20px;">
+        <h3 data-i18n="Want a detailed risk assessment?">Want a detailed risk assessment?</h3>
+        <p style="color:var(--text-muted);margin-bottom:20px;"
+            data-i18n="Take our Health Risk Assessment and get a personalized diet plan automatically.">Take our Health
+            Risk Assessment and we'll automatically recommend the right diet plan for you.</p>
+        <a href="/health-risk" class="btn btn-blue"><i class="fas fa-shield-virus"></i> <span
+                data-i18n="Take Health Risk Assessment">Take Health Risk Assessment</span></a>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const mealIcons = { breakfast: '🌅', lunch: '☀️', dinner: '🌙', snacks: '🍎' };
+
+    async function loadDietPlan() {
+        const condition = document.getElementById('conditionSelect').value;
+        const bmi_range = document.getElementById('bmiSelect').value;
+        const container = document.getElementById('dietPlanContainer');
+        container.innerHTML = '<p style="color:var(--text-muted);text-align:center;"><i class="fas fa-spinner fa-spin"></i> Loading your personalized diet plan...</p>';
+
+        try {
+            const res = await fetch(`/api/diet-lifestyle?condition=${condition}&bmi_range=${bmi_range}`);
+            const plan = await res.json();
+
+            const conditionLabels = {
+                general: 'General Wellness', diabetes: 'Diabetes Management',
+                hypertension: 'Hypertension Control', cardiac: 'Cardiac Health'
+            };
+            const bmiLabels = { normal: 'Normal BMI', overweight: 'Overweight', obese: 'Obese' };
+
+            container.innerHTML = `
+            <div style="background:linear-gradient(135deg,rgba(46,125,50,0.1),rgba(0,188,212,0.08));border-radius:20px;padding:24px;margin-bottom:24px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                    <div>
+                        <h3 style="margin-bottom:4px;">${conditionLabels[plan.condition] || plan.condition}</h3>
+                        <p style="font-size:0.85rem;color:var(--text-muted);">${bmiLabels[plan.bmi_range] || plan.bmi_range} · Daily Water: 💧 ${plan.water_litres}L</p>
+                    </div>
+                    <span class="badge badge-green" style="font-size:0.85rem;">✅ Personalized Plan</span>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:24px;">
+                ${Object.entries(plan.meals).map(([meal, food]) => `
+                <div class="card" style="padding:20px;">
+                    <h4 style="margin-bottom:10px;">${mealIcons[meal] || '🍽️'} ${meal.charAt(0).toUpperCase() + meal.slice(1)}</h4>
+                    <p style="font-size:0.85rem;color:var(--text-muted);">${food}</p>
+                </div>`).join('')}
+            </div>
+            <div class="card" style="padding:20px;background:rgba(198,40,40,0.05);">
+                <h4 style="color:var(--danger);margin-bottom:8px;">🚫 Foods to Avoid</h4>
+                <p style="font-size:0.85rem;color:var(--text-muted);">${plan.avoid_foods}</p>
+            </div>`;
+
+            // Lifestyle tips
+            const lifestyleContainer = document.getElementById('lifestyleContainer');
+            const tipsList = document.getElementById('lifestypeTipsList');
+            lifestyleContainer.style.display = 'block';
+            tipsList.innerHTML = '';
+            const tipIcons = ['🏃', '🧘', '😴', '💧', '🩺', '🧠', '🌿', '⏰'];
+            plan.lifestyle_tips.forEach((tip, i) => {
+                tipsList.innerHTML += `
+                <div class="card" style="padding:16px;display:flex;gap:12px;align-items:flex-start;">
+                    <span style="font-size:1.5rem;">${tipIcons[i % tipIcons.length]}</span>
+                    <p style="font-size:0.85rem;margin:0;">${tip}</p>
+                </div>`;
+            });
+        } catch (e) {
+            container.innerHTML = '<p style="color:var(--text-muted);text-align:center;">Failed to load diet plan. Please try again.</p>';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadDietPlan();
+    });
+</script>
+{% endblock %}

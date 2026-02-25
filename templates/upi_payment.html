@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+{% block title %}UPI Payment{% endblock %}
+{% block breadcrumb %}UPI Payment{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 100px;">
+    <div class="section-header">
+        <h2><i class="fas fa-mobile-alt" style="color:var(--primary);"></i> <span data-i18n="UPI Payment Gateway">UPI
+                Payment Gateway</span></h2>
+        <div class="divider"></div>
+        <p data-i18n="Secure UPI payments for appointments, medicines, and consultations.">Secure, instant UPI payments
+            for appointments, medicines, and consultations.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:960px;margin:0 auto;" class="upi-grid">
+
+        <!-- ─── Payment Form ────────────────── -->
+        <div class="card" id="paymentForm" style="padding:32px;">
+            <h3 style="margin-bottom:4px;" data-i18n="Make a Payment">Make a Payment</h3>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:24px;"
+                data-i18n="Powered by NPCI UPI rails.">Powered by NPCI UPI rails — safe, instant, zero extra charges.
+            </p>
+
+            <div class="form-group">
+                <label data-i18n="Payment Purpose">Payment Purpose</label>
+                <select class="form-input" id="payPurpose" onchange="updateAmount()">
+                    <option value="appointment">Doctor Appointment</option>
+                    <option value="medicine_order">Medicine Order</option>
+                    <option value="telemedicine">Telemedicine Consultation</option>
+                    <option value="emergency">Emergency Services</option>
+                    <option value="general">Other / General</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label data-i18n="Amount (₹)">Amount (₹)</label>
+                <input type="number" class="form-input" id="payAmount" placeholder="Enter amount" min="1" value="500">
+            </div>
+
+            <div class="form-group">
+                <label data-i18n="Your UPI ID">Your UPI ID</label>
+                <div style="position:relative;">
+                    <input type="text" class="form-input" id="payUpiId" placeholder="yourname@paytm / @gpay / @ybl"
+                        style="padding-right:48px;" oninput="validateUpiId()">
+                    <span id="upiValid"
+                        style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:1.1rem;"></span>
+                </div>
+                <small style="color:var(--text-muted);font-size:0.78rem;">Supported: @paytm @gpay @ybl @oksbi @okaxis
+                    @okicici @upi @ibl</small>
+            </div>
+
+            <!-- UPI QR Visual -->
+            <div
+                style="text-align:center;padding:20px;background:var(--bg-card);border-radius:16px;margin-bottom:20px;border:2px dashed var(--border-light);">
+                <div
+                    style="width:100px;height:100px;background:linear-gradient(135deg,#1565C0,#00BCD4);border-radius:12px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-qrcode" style="font-size:3rem;color:#fff;"></i>
+                </div>
+                <p style="font-size:0.82rem;color:var(--text-muted);margin:0;" data-i18n="Scan QR to pay instantly">Scan
+                    to pay via any UPI app</p>
+                <p style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">mediconnect@upi</p>
+            </div>
+
+            <button class="btn btn-blue" onclick="processPayment()"
+                style="width:100%;justify-content:center;font-size:1rem;padding:14px;">
+                <i class="fas fa-lock"></i> <span data-i18n="Pay Securely">Pay Securely</span>
+            </button>
+            <p style="text-align:center;font-size:0.78rem;color:var(--text-muted);margin-top:12px;">
+                <i class="fas fa-shield-alt" style="color:var(--success);"></i> 256-bit SSL encrypted · NPCI certified ·
+                PCI-DSS compliant
+            </p>
+        </div>
+
+        <!-- ─── Right Panel ───────────────── -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+
+            <!-- Payment Result -->
+            <div id="paymentResult" style="display:none;"></div>
+
+            <!-- Supported UPI Apps -->
+            <div class="card" style="padding:20px;">
+                <h4 style="margin-bottom:14px;" data-i18n="Supported UPI Apps">Supported UPI Apps</h4>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
+                    <div style="padding:12px;border-radius:10px;background:var(--bg-body);">
+                        <div style="font-size:1.5rem;">📱</div>
+                        <div style="font-size:0.75rem;margin-top:4px;">Google Pay</div>
+                    </div>
+                    <div style="padding:12px;border-radius:10px;background:var(--bg-body);">
+                        <div style="font-size:1.5rem;">💙</div>
+                        <div style="font-size:0.75rem;margin-top:4px;">PhonePe</div>
+                    </div>
+                    <div style="padding:12px;border-radius:10px;background:var(--bg-body);">
+                        <div style="font-size:1.5rem;">🔵</div>
+                        <div style="font-size:0.75rem;margin-top:4px;">Paytm</div>
+                    </div>
+                    <div style="padding:12px;border-radius:10px;background:var(--bg-body);">
+                        <div style="font-size:1.5rem;">🏦</div>
+                        <div style="font-size:0.75rem;margin-top:4px;">BHIM UPI</div>
+                    </div>
+                    <div style="padding:12px;border-radius:10px;background:var(--bg-body);">
+                        <div style="font-size:1.5rem;">💳</div>
+                        <div style="font-size:0.75rem;margin-top:4px;">Amazon Pay</div>
+                    </div>
+                    <div style="padding:12px;border-radius:10px;background:var(--bg-body);">
+                        <div style="font-size:1.5rem;">🟠</div>
+                        <div style="font-size:0.75rem;margin-top:4px;">CRED Pay</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction History -->
+            <div class="card" style="padding:20px;flex:1;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+                    <h4 data-i18n="Recent Transactions">Recent Transactions</h4>
+                    <button class="btn btn-sm btn-outline" onclick="loadHistory()" style="font-size:0.78rem;">
+                        <i class="fas fa-refresh"></i> Refresh
+                    </button>
+                </div>
+                <div id="txnHistory">
+                    <p style="color:var(--text-muted);font-size:0.85rem;" data-i18n="Loading...">Loading...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const purposeAmounts = {
+        appointment: 500, medicine_order: 250, telemedicine: 300, emergency: 0, general: 100
+    };
+
+    function updateAmount() {
+        const purpose = document.getElementById('payPurpose').value;
+        document.getElementById('payAmount').value = purposeAmounts[purpose] || 0;
+    }
+
+    function validateUpiId() {
+        const val = document.getElementById('payUpiId').value;
+        const span = document.getElementById('upiValid');
+        const valid = val.includes('@') && val.split('@')[0].length > 0 && val.split('@')[1].length > 0;
+        span.textContent = val ? (valid ? '✅' : '❌') : '';
+    }
+
+    async function processPayment() {
+        const amount = parseFloat(document.getElementById('payAmount').value);
+        const upi_id = document.getElementById('payUpiId').value.trim();
+        const purpose = document.getElementById('payPurpose').value;
+
+        if (!upi_id || !upi_id.includes('@')) {
+            showAlert('Please enter a valid UPI ID', 'error'); return;
+        }
+        if (!amount || amount <= 0) {
+            showAlert('Please enter a valid amount', 'error'); return;
+        }
+
+        const btn = document.querySelector('#paymentForm button.btn-blue');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+        try {
+            const res = await fetch('/api/upi-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount, upi_id, purpose })
+            });
+            const data = await res.json();
+            showPaymentResult(data);
+            if (data.success) loadHistory();
+        } catch (e) {
+            showAlert('Payment gateway error. Please try again.', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-lock"></i> Pay Securely';
+        }
+    }
+
+    function showPaymentResult(data) {
+        const container = document.getElementById('paymentResult');
+        container.style.display = 'block';
+        if (data.success) {
+            container.innerHTML = `
+            <div class="card" style="padding:24px;border-left:4px solid var(--success);background:rgba(46,125,50,0.06);">
+                <div style="text-align:center;margin-bottom:16px;">
+                    <div style="font-size:3rem;">✅</div>
+                    <h3 style="color:var(--success);margin:8px 0 4px;">Payment Successful!</h3>
+                    <div style="font-size:2rem;font-weight:800;">₹${Number(data.amount).toLocaleString('en-IN')}</div>
+                </div>
+                <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.8;">
+                    <div><b>Transaction ID:</b> <code style="font-size:0.78rem;">${data.transaction_id}</code></div>
+                    <div><b>UPI ID:</b> ${data.upi_id}</div>
+                    <div><b>Time:</b> ${data.timestamp}</div>
+                    <div><b>Status:</b> <span style="color:var(--success);font-weight:600;">Completed</span></div>
+                </div>
+                <p style="font-size:0.78rem;color:var(--text-muted);margin-top:12px;text-align:center;">${data.message}</p>
+            </div>`;
+        } else {
+            container.innerHTML = `
+            <div class="card" style="padding:24px;border-left:4px solid var(--danger);background:rgba(198,40,40,0.06);">
+                <div style="text-align:center;">
+                    <div style="font-size:3rem;">❌</div>
+                    <h3 style="color:var(--danger);margin:8px 0 4px;">Payment Failed</h3>
+                    <p style="font-size:0.85rem;color:var(--text-muted);">${data.message}</p>
+                    <p style="font-size:0.78rem;color:var(--text-muted);">Ref: ${data.transaction_id}</p>
+                    <button class="btn btn-blue" onclick="document.getElementById('paymentResult').style.display='none'" style="margin-top:12px;">Try Again</button>
+                </div>
+            </div>`;
+        }
+    }
+
+    async function loadHistory() {
+        try {
+            const res = await fetch('/api/upi-payment/history');
+            const txns = await res.json();
+            const container = document.getElementById('txnHistory');
+            if (txns.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">No transactions yet.</p>';
+                return;
+            }
+            container.innerHTML = txns.map(t => `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-light);">
+                <div>
+                    <div style="font-size:0.85rem;font-weight:600;">${t.purpose.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</div>
+                    <div style="font-size:0.72rem;color:var(--text-muted);">${t.transaction_id} · ${t.created_at}</div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-weight:700;">₹${Number(t.amount).toLocaleString('en-IN')}</div>
+                    <span class="badge ${t.status === 'Success' ? 'badge-green' : 'badge-red'}" style="font-size:0.7rem;">${t.status}</span>
+                </div>
+            </div>`).join('');
+        } catch (e) {
+            document.getElementById('txnHistory').innerHTML = '<p style="color:var(--text-muted);">Failed to load history.</p>';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadHistory);
+</script>
+
+<style>
+    @media (max-width: 768px) {
+        .upi-grid {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+{% endblock %}

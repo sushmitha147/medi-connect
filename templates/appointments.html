@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% block title %}Book Appointment{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 100px;">
+    <div class="section-header">
+        <h2><i class="fas fa-calendar-check" style="color:var(--success);"></i> Book an Appointment</h2>
+        <div class="divider"></div>
+        <p>Find the right specialist, choose a time slot, and pay securely online.</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="card" style="margin-bottom:24px;display:flex;gap:16px;flex-wrap:wrap;align-items:end;">
+        <div class="form-group" style="margin:0;flex:1;min-width:200px;">
+            <label>Specialization</label>
+            <select class="form-input" id="filterSpec" onchange="filterDoctors()">
+                <option value="">All Specializations</option>
+            </select>
+        </div>
+        <div class="form-group" style="margin:0;flex:1;min-width:200px;">
+            <label>Date</label>
+            <input type="date" class="form-input" id="apptDate" value="" onchange="filterDoctors()">
+        </div>
+        <button class="btn btn-sm btn-blue" onclick="filterDoctors()"><i class="fas fa-search"></i> Search</button>
+    </div>
+
+    <!-- Doctor Cards -->
+    <div class="doctor-cards" id="doctorList">
+        <p style="color:var(--text-muted);">Loading doctors...</p>
+    </div>
+</section>
+
+<!-- Payment Modal -->
+<div class="modal-overlay" id="paymentModal">
+    <div class="modal">
+        <h2><i class="fas fa-lock" style="color:var(--primary);"></i> Secure Payment</h2>
+        <div style="text-align:center;margin-bottom:20px;">
+            <div style="font-size:0.88rem;color:var(--text-muted);" id="paymentDoctor">--</div>
+            <div style="font-size:0.88rem;color:var(--text-muted);" id="paymentSlot">--</div>
+            <div style="font-size:1.5rem;font-weight:700;color:var(--primary);margin-top:8px;" id="paymentAmount">₹--
+            </div>
+        </div>
+        <div class="payment-options">
+            <div class="payment-option selected" onclick="selectPayment(this,'UPI')">
+                <i class="fas fa-mobile-alt"></i><span>UPI</span>
+            </div>
+            <div class="payment-option" onclick="selectPayment(this,'Credit Card')">
+                <i class="fas fa-credit-card"></i><span>Credit Card</span>
+            </div>
+            <div class="payment-option" onclick="selectPayment(this,'Debit Card')">
+                <i class="fas fa-credit-card"></i><span>Debit Card</span>
+            </div>
+            <div class="payment-option" onclick="selectPayment(this,'Net Banking')">
+                <i class="fas fa-university"></i><span>Net Banking</span>
+            </div>
+        </div>
+
+        <div id="upiSection">
+            <div class="form-group">
+                <label>UPI ID</label>
+                <input type="text" class="form-input" id="upiId" placeholder="yourname@paytm / phone@gpay">
+            </div>
+        </div>
+        <div id="cardSection" style="display:none;">
+            <div class="form-group">
+                <label>Card Number</label>
+                <input type="text" class="form-input" placeholder="XXXX XXXX XXXX XXXX" maxlength="19">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Expiry</label>
+                    <input type="text" class="form-input" placeholder="MM/YY" maxlength="5">
+                </div>
+                <div class="form-group">
+                    <label>CVV</label>
+                    <input type="password" class="form-input" placeholder="***" maxlength="3">
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-blue" style="width:100%;justify-content:center;" onclick="processPayment()">
+            <i class="fas fa-shield-alt"></i> Pay Securely
+        </button>
+        <button class="btn" style="width:100%;justify-content:center;margin-top:8px;color:var(--text-muted);"
+            onclick="closePayment()">Cancel</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let allDoctors = [];
+    let selectedDoctor = null, selectedSlot = null, selectedPaymentMethod = 'UPI';
+
+    // Set default date to today
+    document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('apptDate').value = today;
+        loadDoctors();
+    });
+
+    async function loadDoctors() {
+        try {
+            const res = await fetch('/api/doctors');
+            allDoctors = await res.json();
+
+            // Populate filter
+            const specs = [...new Set(allDoctors.map(d => d.specialization))];
+            const sel = document.getElementById('filterSpec');
+            specs.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s; opt.textContent = s;
+                sel.appendChild(opt);
+            });
+
+            renderDoctors(allDoctors);
+        } catch (e) { console.error('Failed to load doctors:', e); }
+    }
+
+    function filterDoctors() {
+        const spec = document.getElementById('filterSpec').value;
+        let filtered = allDoctors;
+        if (spec) filtered = filtered.filter(d => d.specialization === spec);
+        renderDoctors(filtered);
+    }
+
+    function renderDoctors(doctors) {
+        const container = document.getElementById('doctorList');
+        container.innerHTML = doctors.map(d => `
+        <div class="doctor-card">
+            <div class="doctor-card-header">
+                <div class="doctor-avatar"><i class="fas fa-user-md"></i></div>
+                <div>
+                    <h3>${d.name}</h3>
+                    <p>${d.specialization}</p>
+                </div>
+            </div>
+            <div class="doctor-info">
+                <span><i class="fas fa-star" style="color:#F59E0B;"></i> ${d.rating}</span>
+                <span><i class="fas fa-clock"></i> ${d.experience} yrs</span>
+                <span><i class="fas fa-hospital"></i> ${d.hospital}</span>
+                <span style="font-weight:600;color:var(--primary);">₹${d.fee}</span>
+            </div>
+            <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:8px;">Available Slots:</div>
+            <div class="slots-container">
+                ${(d.available_slots || []).map(s => `<button class="slot-btn" onclick="selectSlot(this,'${s}',${d.id},'${d.name}',${d.fee})">${s}</button>`).join('')}
+            </div>
+            <button class="btn btn-sm btn-blue" style="width:100%;justify-content:center;" onclick="bookDoctor(${d.id},'${d.name}',${d.fee})" id="bookBtn${d.id}" disabled>
+                <i class="fas fa-calendar-plus"></i> Select a Slot First
+            </button>
+        </div>
+    `).join('');
+    }
+
+    function selectSlot(btn, slot, docId, docName, fee) {
+        // Clear previous selections within same card
+        btn.closest('.doctor-card').querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedSlot = slot;
+        selectedDoctor = { id: docId, name: docName, fee: fee };
+        const bookBtn = document.getElementById('bookBtn' + docId);
+        bookBtn.disabled = false;
+        bookBtn.innerHTML = `<i class="fas fa-calendar-plus"></i> Book at ${slot}`;
+    }
+
+    function bookDoctor(docId, docName, fee) {
+        if (!selectedSlot) { showAlert('Please select a time slot first.', 'error'); return; }
+        selectedDoctor = { id: docId, name: docName, fee: fee };
+        document.getElementById('paymentDoctor').textContent = docName;
+        document.getElementById('paymentSlot').textContent =
+            document.getElementById('apptDate').value + ' at ' + selectedSlot;
+        document.getElementById('paymentAmount').textContent = '₹' + fee;
+        document.getElementById('paymentModal').classList.add('show');
+    }
+
+    function selectPayment(el, method) {
+        document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedPaymentMethod = method;
+        document.getElementById('upiSection').style.display = method === 'UPI' ? 'block' : 'none';
+        document.getElementById('cardSection').style.display = (method === 'Credit Card' || method === 'Debit Card') ? 'block' : 'none';
+    }
+
+    async function processPayment() {
+        const btn = event.target.closest('button');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        btn.disabled = true;
+
+        try {
+            const res = await fetch('/api/appointments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    doctor_id: selectedDoctor.id,
+                    date: document.getElementById('apptDate').value,
+                    time: selectedSlot,
+                    amount: selectedDoctor.fee,
+                    payment_method: selectedPaymentMethod
+                })
+            });
+            const data = await res.json();
+            closePayment();
+            showAlert(`✅ Appointment booked with ${selectedDoctor.name}! Payment of ₹${selectedDoctor.fee} via ${selectedPaymentMethod} successful.`);
+            selectedSlot = null;
+        } catch {
+            showAlert('Payment failed. Please try again.', 'error');
+        }
+        btn.innerHTML = '<i class="fas fa-shield-alt"></i> Pay Securely';
+        btn.disabled = false;
+    }
+
+    function closePayment() {
+        document.getElementById('paymentModal').classList.remove('show');
+    }
+</script>
+{% endblock %}
